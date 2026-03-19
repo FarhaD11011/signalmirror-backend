@@ -1,21 +1,19 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const pool = require("./src/config/db");
+const sourcesRoutes = require("./src/routes/sourcesRoutes");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// ✅ middleware
 app.use(express.json());
 
-// ✅ basic route
 app.get("/", (req, res) => {
   res.send("EchoFlow API is running...");
 });
 
-// ✅ DB test route
 app.get("/db-test", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -34,7 +32,8 @@ app.get("/db-test", async (req, res) => {
   }
 });
 
-// ✅ start server
+app.use("/api/sources", sourcesRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

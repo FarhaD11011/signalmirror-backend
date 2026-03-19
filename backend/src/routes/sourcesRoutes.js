@@ -1,0 +1,51 @@
+const express = require("express");
+const router = express.Router();
+const pool = require("../config/db");
+
+// ✅ POST /api/sources
+router.post("/", async (req, res) => {
+  try {
+    const {
+      title,
+      url,
+      summary,
+      image_url,
+      platform,
+      category_id,
+      submitter_id,
+    } = req.body;
+
+    // ✅ basic validation
+    if (!title || !url || !submitter_id) {
+      return res.status(400).json({
+        success: false,
+        message: "title, url, and submitter_id are required",
+      });
+    }
+
+    const result = await pool.query(
+      `
+      INSERT INTO sources
+      (title, url, summary, image_url, platform, category_id, submitter_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+      `,
+      [title, url, summary || null, image_url || null, platform || null, category_id || null, submitter_id]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Source submitted and set to pending",
+      source: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error submitting source:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to submit source",
+      error: error.message,
+    });
+  }
+});
+
+module.exports = router;
