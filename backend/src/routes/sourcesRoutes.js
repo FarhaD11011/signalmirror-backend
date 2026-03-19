@@ -16,13 +16,24 @@ router.post("/", async (req, res) => {
     } = req.body;
 
     // ✅ basic validation
-    if (!title || !url || !submitter_id) {
-      return res.status(400).json({
-        success: false,
-        message: "title, url, and submitter_id are required",
-      });
+    // if (!title || !url || !submitter_id) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "title, url, and submitter_id are required",
+    //   });
+    // }
+
+    if (!title || typeof title !== "string" || title.trim() === "") {
+    return res.status(400).json({ message: "Valid title is required" });
+    }
+    if (!url || !url.startsWith("http")) {
+    return res.status(400).json({ message: "Valid URL is required" });
+    }
+    if (!submitter_id || typeof submitter_id !== "number") {
+    return res.status(400).json({ message: "Valid submitter_id is required" });
     }
 
+    
     const result = await pool.query(
       `
       INSERT INTO sources

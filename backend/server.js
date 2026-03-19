@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const pool = require("./src/config/db");
 const sourcesRoutes = require("./src/routes/sourcesRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+
 
 dotenv.config();
 
@@ -33,6 +35,8 @@ app.get("/db-test", async (req, res) => {
 });
 
 app.use("/api/sources", sourcesRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
