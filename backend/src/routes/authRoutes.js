@@ -65,4 +65,50 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// ✅ POST /api/auth/login
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // ✅ validate input
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      return res.status(400).json({ message: "Valid email is required" });
+    }
+    if (!password || typeof password !== "string") {
+      return res.status(400).json({ message: "Password is required" });
+    }
+    // ✅ find user by email
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email.trim().toLowerCase()]
+    );
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    const user = result.rows[0];
+    // ✅ compare password with stored hash
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    // ✅ login success
+    res.json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;
