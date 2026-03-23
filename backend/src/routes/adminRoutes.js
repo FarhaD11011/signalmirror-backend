@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+
 
 // ✅ PATCH /api/admin/approve/:id
-router.patch("/approve/:id", async (req, res) => {
+router.patch("/approve/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-
     const result = await pool.query(
       `
       UPDATE sources
@@ -16,14 +18,12 @@ router.patch("/approve/:id", async (req, res) => {
       `,
       [id]
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Source not found",
       });
     }
-
     res.json({
       success: true,
       message: "Source approved successfully",
