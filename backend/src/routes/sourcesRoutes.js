@@ -3,17 +3,28 @@ const router = express.Router();
 const pool = require("../config/db");
 
 // ✅ GET /api/sources
-// public feed: only approved sources
+// public feed: only approved sources, optionally filtered by category
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query(
-      `
+    const { category_id } = req.query;
+    let query = `
       SELECT *
       FROM sources
       WHERE status = 'approved'
-      ORDER BY created_at DESC;
-      `
-    );
+    `;
+    const values = [];
+    if (category_id !== undefined) {
+      const parsedCategoryId = Number(category_id);
+      if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
+        return res.status(400).json({
+          message: "category_id must be a positive integer",
+        });
+      }
+      query += ` AND category_id = $1`;
+      values.push(parsedCategoryId);
+    }
+    query += ` ORDER BY created_at DESC`;
+    const result = await pool.query(query, values);
     res.json({
       success: true,
       count: result.rows.length,
@@ -28,6 +39,7 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 
 // ✅ POST /api/sources
 router.post("/", async (req, res) => {
