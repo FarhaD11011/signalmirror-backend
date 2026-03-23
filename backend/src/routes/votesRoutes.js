@@ -9,33 +9,28 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     const { source_id, vote_type } = req.body;
     const user_id = req.user.id;
-
     // ✅ validate source_id
     if (!source_id || typeof source_id !== "number") {
       return res.status(400).json({
         message: "Valid source_id is required",
       });
     }
-
     // ✅ validate vote_type
     if (vote_type !== "up" && vote_type !== "down") {
       return res.status(400).json({
         message: "vote_type must be 'up' or 'down'",
       });
     }
-
     // ✅ optional: make sure source exists
     const sourceCheck = await pool.query(
       "SELECT id FROM sources WHERE id = $1",
       [source_id]
     );
-
     if (sourceCheck.rows.length === 0) {
       return res.status(404).json({
         message: "Source not found",
       });
     }
-
     // ✅ insert new vote or update existing one
     const result = await pool.query(
       `
@@ -47,7 +42,6 @@ router.post("/", authMiddleware, async (req, res) => {
       `,
       [user_id, source_id, vote_type]
     );
-
     res.status(201).json({
       success: true,
       message: "Vote saved successfully",
