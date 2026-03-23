@@ -4,6 +4,7 @@ const pool = require("./src/config/db");
 const sourcesRoutes = require("./src/routes/sourcesRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
 const authRoutes = require("./src/routes/authRoutes");
+const votesRoutes = require("./src/routes/votesRoutes");
 
 
 dotenv.config();
@@ -40,6 +41,12 @@ app.use("/api/sources", sourcesRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/votes", votesRoutes)
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
