@@ -1,6 +1,6 @@
-# Echo Flow
+# RelayFlow
 
-Echo Flow is a full-stack app for submitting and reviewing content through a moderation workflow.
+RelayFlow is a full-stack app for submitting and reviewing content through a moderation workflow.
 
 ## Project Structure
 

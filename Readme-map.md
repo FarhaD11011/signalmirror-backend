@@ -1,0 +1,949 @@
+
+2026-EchoFlow
+<!-- 
+Phase 0 — Git-first foundation -->
+
+Before coding features:
+	•	create project folder
+	•	initialize git repo
+	•	create .gitignore
+	•	create initial README
+	•	make first commit
+	•	define folder structure for backend and later frontend
+
+<!-- Phase 1 — Backend bootstrap -->
+	•	initialize Node backend
+	•	install dependencies
+	•	create server
+	•	verify server runs on 5001
+	•	commit
+
+<!-- Phase 2 — PostgreSQL setup -->
+	•	create database
+	•	design schema
+	•	create tables
+	•	connect backend to database
+	•	test DB connection
+	•	commit
+
+<!-- Phase 3 — Backend architecture cleanup -->
+	•	routes
+	•	controllers
+	•	services/helpers
+	•	config
+	•	middleware
+	•	error handling
+	•	commit
+
+<!-- Phase 4 — Core Echo Flow features -->
+	•	source submission
+	•	pending status
+	•	approval route
+	•	public approved feed
+	•	commit after each feature
+
+<!-- Phase 5 — Auth and admin permissions -->
+	•	users
+	•	login/auth
+	•	role protection
+	•	admin-only approval actions
+	•	commit by feature
+
+<!-- Phase 6 — Frontend -->
+	•	React setup
+	•	API connection
+	•	submission UI
+	•	feed UI
+	•	admin moderation UI
+	•	commit by screen/feature
+
+<!-- Phase 7 — Polish -->
+	•	validation
+	•	testing
+	•	cleanup
+	•	documentation
+	•	deployment prep
+
+
+
+<!-- ************************************************************************************ -->
+-2026-EchoFlow-app
+
+<!-- Step 0.1 — Create the new project folder -->
+-mkdir echoflow
+-cd echoflow
+<!-- Step 0.2 — Initialize Git -->
+-git init
+<!-- Step 0.3 — Create the base project structure -->
+-mkdir backend
+-mkdir frontend
+<!-- Step 0.4 — Create a .gitignore file -->
+.gitignore
+Put this inside it:
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vscode/
+<!-- Step 0.5 — Create a first README.md -->
+-touch README.md
+-touch Readme-map.md
+<!-- Step 0.6 — Make your first commit -->
+git add .
+git commit -m "Initialize Echo Flow repo with base structure"
+You now have:
+	•	✅ clean repo initialized
+	•	✅ first commit done (root commit)
+	•	✅ proper structure (backend/, frontend/)
+	•	✅ working tree clean
+This is a professional starting point.
+<!-- 🚀 Phase 1 — Backend Bootstrap -->
+<!-- Step 1.1 — Initialize Node inside backend -->
+cd backend
+npm init -y
+This creates:
+backend/package.json
+<!-- Step 1.2 — Install core dependencies -->
+npm install express
+npm install --save-dev nodemon
+<!-- Step 1.3 — Update package.json scripts -->
+"scripts": {
+  "start": "node server.js",
+  "dev": "nodemon server.js"
+}
+<!-- Step 1.4 — Create server file -->
+server.js
+<!-- Step 1.5 — Run the server -->
+npm run dev
+you should see:
+Server running on http://localhost:5001
+EchoFlow API is running...
+<!-- Step 1.6 — Commit this phase -->
+Go back to root (important):
+cd ..
+git add .
+git commit -m "Setup backend with Express server and nodemon"
+<!-- ✅ What this phase represents (important for your understanding) -->
+This commit = Backend bootstrap layer
+You now have:
+	•	Node project initialized
+	•	Express server running
+	•	Basic route working
+	•	Dev workflow with nodemon
+This is exactly how real projects start.
+<!-- 🧠 Small mindset shift (important) -->
+Notice what we did:
+We did NOT:
+	•	jump into database
+	•	jump into features
+	•	mix logic
+We built a clean base layer first.
+That’s what separates:
+👉 tutorial coding
+from
+👉 real engineering
+<!--🚀 Phase 2 — PostgreSQL setup and backend connection -->
+Now we connect Echo Flow to a real database.
+At the end of this phase, you will have:
+	•	PostgreSQL database created
+	•	backend dependencies for DB installed
+	•	environment variables added
+	•	database connection file created
+	•	test route to verify backend ↔ PostgreSQL connection
+	•	a clean Git commit for this phase
+<!-- Step 2.1 — Install database dependencies -->
+npm install pg dotenv
+What these do:
+	•	pg = lets Node talk to PostgreSQL
+	•	dotenv = loads secrets from .env
+<!-- Step 2.2 — Create backend folder structure -->
+mkdir src
+mkdir src/config
+mkdir src/routes
+mkdir src/controllers
+mkdir src/models
+mkdir src/middleware
+mkdir src/helpers
+<!-- Step 2.3 — Create .env in backend -->
+touch backend/.env
+inside it:
+PORT=5001
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=echoflow
+DB_PASSWORD=your_postgres_password
+DB_PORT=5432
+<!-- Step 2.4 — Create database in PostgreSQL -->
+psql postgres
+CREATE DATABASE echoflow;
+or in terminal:
+createdb echoflow
+<!-- Step 2.5 — Create DB connection file -->
+touch backend/src/config/db.js
+<!-- Step 2.6 — Update server.js to use env and DB test -->
+Open backend/server.js and replace it with this:
+<!-- Step 2.7 — Run the backend again -->
+npm run dev
+Then test both routes in browser:
+http://localhost:5001
+http://localhost:5001/db-test
+<!-- Step 2.8 — Commit this phase -->
+git add .
+git commit -m "Add PostgreSQL connection and backend folder structure"
+git log --oneline
+What this phase means
+This commit represents:
+“Echo Flow backend can now talk to a real database.”
+That is a major project milestone.
+<!-- ✅See what changed (THIS is the important one) -->
+🔍 Option A — See changes in last commit
+git show
+🔍 Option B — See file history specifically
+git log -p backend/server.js
+🔍 Option C — Compare with previous version
+git diff HEAD~1 backend/server.js
+🔍 Option D — Visual (best if using VS Code)
+In VS Code:
+	1.	Open server.js
+	2.	Click Source Control tab (Git icon)
+	3.	Click the file
+You’ll see:
+	•	red = removed
+	•	green = added
+<!-- ⛔ Before we move on -->
+Run this and show me output:
+git show --name-only
+
+What happened
+Your root .gitignore has:
+node_modules/
+But Git still tracked backend/node_modules in this repo state, likely because of how the pattern matched from where files were added, or because it got added before ignore behavior protected it in practice.
+So git show --name-only is listing:
+	•	all installed package files from dotenv, pg, etc.
+	•	plus your real project files like:
+	•	backend/package.json
+	•	backend/server.js
+	•	backend/src/config/db.js
+⛔We should fix this now
+<!-- Step 1 — Update .gitignore -->
+Open root .gitignore and replace it with this:
+node_modules
+**/node_modules
+.env
+**/.env
+.DS_Store
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vscode/
+<!-- Step 2 — Remove tracked node_modules from Git only -->
+git rm -r --cached backend/node_modules
+<!-- Step 3 — Commit the cleanup -->
+git add .gitignore
+git commit -m "Remove node_modules from Git tracking"
+git status
+git show --name-only --stat
+<!--🚀 Phase 3 — Create the initial database schema -->
+We are going to create the core Echo Flow tables:
+	1.	users
+	2.	categories
+	3.	sources
+	4.	votes
+	5.	bookmarks
+<!-- Step 3.1 — Enter the database -->
+in terminal:
+psql -d echoflow
+\c echoflow
+echoflow=#:
+<!-- Step 3.2 — Create the users table -->
+<!-- Step 3.3 — Create the categories table -->
+<!-- Step 3.4 — Create the sources table -->
+<!-- Step 3.5 — Create the votes table -->
+<!-- Step 3.6 — Create the bookmarks table -->
+<!-- Step 3.7 — Verify tables were created -->
+\dt
+<!-- Step 3.9 — Save schema into the repo -->
+inside backend:
+mkdir sql
+touch backend/sql/schema.sql
+<!-- Step 3.10 — Commit the schema -->
+git add .
+git commit -m "Create initial database schema for Echo Flow"
+<!-- 🚀Phase 4 — First real feature: source submission route -->
+<!-- Step 4.1 — Create route file -->
+touch backend/src/routes/sourcesRoutes.js
+<!-- Step 4.2 — Connect the route in server.js -->
+const sourcesRoutes = require("./src/routes/sourcesRoutes");
+<!-- Step 4.3 — Add test data to DB first -->
+in terminal psql -d echoflow
+INSERT INTO users (username, email, password_hash, role)
+VALUES ('farhad', 'farhad@example.com', 'hashed_password_here', 'user');
+
+INSERT INTO users (username, email, password_hash, role)
+VALUES ('admin1', 'admin@example.com', 'hashed_password_here', 'admin');
+
+INSERT INTO categories (name)
+VALUES ('Technology'), ('World'), ('Science');
+
+SELECT * FROM users;
+SELECT * FROM categories;
+
+<!-- Step 4.4 — Restart backend -->
+<!-- Step 4.5 — Test source submission -->
+Make a POST request to:
+http://localhost:5001/api/sources
+body:
+{
+  "title": "Ocean News Example",
+  "url": "https://example.com/ocean-news",
+  "summary": "Sample article about oceans.",
+  "image_url": null,
+  "platform": "website",
+  "category_id": 1,
+  "submitter_id": 1
+}
+<!-- Step 4.6 — Verify in PostgreSQL -->
+SELECT id, title, status, category_id, submitter_id FROM sources;
+<!-- Step 4.7 — Commit this feature -->
+git add .
+git commit -m "Add source submission route with pending moderation status"
+Why this step matters architecturally
+You now have the first real business flow:
+	•	client sends data
+	•	backend validates input
+	•	backend inserts into DB
+	•	source enters moderation lifecycle
+	•	system returns structured JSON
+
+🧠 What “validation” means (concept)
+When the client (frontend, Postman, etc.) sends data to your API:
+{
+  "title": "Ocean News Example",
+  "url": "https://example.com/ocean-news",
+  "submitter_id": 1
+}
+The backend must not blindly trust it.
+Why?
+Because a client can send:
+	•	missing fields
+	•	wrong types
+	•	invalid values
+	•	malicious input
+So validation = checking that incoming data is correct before using it.
+🔍 What this actually does:
+if (!title || !url || !submitter_id)
+means:
+	•	if title is missing OR empty
+	•	OR url is missing
+	•	OR submitter_id is missing
+👉 then stop the request immediately
+
+🧠 Very important principle
+Validation happens in two layers:
+1. Backend (you just did)
+	•	prevents bad requests early
+	•	returns clean error messages
+Required fields: if (!title)
+Type validation: if (typeof title !== "string")
+Format validation: if (!url.startsWith("http"))
+Length validation: if (title.length > 255)
+2. Database (you also did)
+	•	enforces constraints
+	•	prevents invalid data from being stored
+Database-level validation: vote_type IN ('up', 'down')
+PostgreSQL enforces rules too.
+👉 Together = strong system
+<!-- ⚠️ Why this matters (real-world) -->
+Without validation:
+Someone could send:
+{
+  "title": null,
+  "url": "DROP TABLE users;",
+  "submitter_id": "abc"
+}
+And your app would:
+	•	crash
+	•	store garbage
+	•	or worse
+🧪 Small upgrade (optional but good)
+if (!title || typeof title !== "string" || title.trim() === "") {
+  return res.status(400).json({ message: "Valid title is required" });
+}
+if (!url || !url.startsWith("http")) {
+  return res.status(400).json({ message: "Valid URL is required" });
+}
+if (!submitter_id || typeof submitter_id !== "number") {
+  return res.status(400).json({ message: "Valid submitter_id is required" });
+}
+
+<!-- 📊 Interview version of your answer -->
+If asked:
+“How do you validate data in your backend?”
+You should say:
+“I validate incoming request data inside my route handlers before interacting with the database. For example, in the source submission route, I check that required fields like title, URL, and submitter_id are present and valid. If any required field is missing or invalid, I return a 400 error and stop the request.
+This prevents invalid or malicious data from reaching the database. I also rely on PostgreSQL constraints like foreign keys and checks to enforce data integrity at the database level.”
+
+<!-- “Didn’t we already define types in the schema? Why do we still need backend validation?” -->
+Short answer:
+👉 Database types help, but they are not enough.
+👉 Backend validation protects the app before the database is even involved.
+🚫 Problem 1 — Ugly errors to users
+🚫 Problem 2 — Wrong types can still slip through
+🚫 Problem 3 — Business rules are not in DB
+🚫 Problem 4 — Security risks
+<!-- 🧠 Correct architecture model -->
+Think of it like layers:
+Layer 1 — Backend validation (first defense)
+	•	required fields
+	•	type checks
+	•	format checks
+	•	clean error messages
+Layer 2 — Database constraints (final defense)
+	•	foreign keys
+	•	NOT NULL
+	•	UNIQUE
+	•	CHECK
+👉 Backend = filter
+👉 Database = enforcer
+<!-- 💬 Interview-quality answer -->
+If asked this exact question, say:
+
+“Even though the database enforces types and constraints, I still validate data in the backend. The backend allows me to catch errors earlier, return clean and user-friendly messages, and enforce business rules that the database doesn’t handle, like format or minimum length.
+The database acts as a final safety layer, but relying only on it would lead to poor user experience and less control over application logic.”
+<!-- 🚀Phase 5 — Moderation system (core of Echo Flow) -->
+<!-- Phase 5.1 — Build admin approval route first -->
+<!-- Step 5.1 — Create admin route file -->
+touch backend/src/routes/adminRoutes.js
+<!-- Step 5.2 — Connect admin route in server.js -->
+const adminRoutes = require("./src/routes/adminRoutes");
+<!-- Step 5.3 — Test the approval route -->
+cd backend
+npm run dev
+Then send a PATCH request to:
+http://localhost:5001/api/admin/approve/1
+<!-- Step 5.4 — Verify in PostgreSQL -->
+SELECT id, title, status FROM sources;
+<!-- Step 5.5 — Commit this stage -->
+git add .
+git commit -m "Add admin approval route for pending sources"
+<!-- Phase 5.2 — Public approved feed route -->
+Goal
+Create a route that returns only approved content.
+That means:
+	•	pending content stays hidden
+	•	approved content becomes visible
+	•	public feed has moderation protection built in
+<!-- Step 5.2.1 — Add GET route to sourcesRoutes.js -->
+backend/src/routes/sourcesRoutes.js
+So this file now has:
+	•	GET /api/sources → public approved feed
+	•	POST /api/sources → submit new source
+<!-- Step 5.2.2 — Restart backend -->
+<!-- Step 5.2.3 — Test the public feed -->
+POST: http://localhost:5001/api/sources
+<!-- Step 5.2.4 — Prove moderation works -->
+Submit another source with POST: /api/sources:
+Then call again:
+POSt: http://localhost:5001/api/sources
+<!-- Step 5.2.5 — Verify in PostgreSQL -->
+SELECT id, title, status FROM sources ORDER BY id;
+<!-- Step 5.2.6 — Commit this stage -->
+git add .
+git commit -m "Add public feed route for approved sources only"
+
+<!-- Interview version of what you built so far -->
+You can now honestly say:
+“I built the backend foundation of Echo Flow with Node, Express, and PostgreSQL. I designed a relational schema for users, categories, sources, votes, and bookmarks. I implemented a moderation workflow where submitted content is stored as pending, admins can approve it, and the public feed only returns approved sources. I also tracked the rebuild from the start using Git so every major stage is visible in commit history.”
+That is already a strong project explanation.
+
+<!-- Interview-quality summary -->
+If an interviewer asks what this route does, you can say:
+“This POST route handles source submission. It reads the incoming JSON body, validates required fields like title, URL, and submitter ID, then inserts the new source into PostgreSQL using a parameterized query. Optional fields are converted to null if missing, and the database applies the default moderation status of pending. On success, the route returns the newly created row with a 201 status. On invalid input it returns 400, and on server or database failure it returns 500.”
+That is a strong answer.
+If you want, next I can rewrite this same route with // ✅ comments on every important line so it becomes easier to study in your codebase.
+<!-- 🚀Phase 6 — Authentication foundation -->
+Goal of this phase:
+	•	create signup route
+	•	hash passwords safely
+	•	store real users in DB
+	•	prepare for login and JWT next
+Right now your users table already has password_hash, which is good.
+Now we make that table actually useful.
+<!-- Step 6.1 — Install auth dependency -->
+npm install bcrypt
+What it does:
+	•	hashes passwords securely
+	•	prevents storing raw passwords in DB
+Never store plain passwords.
+<!-- Step 6.2 — Create auth route file -->
+touch backend/src/routes/authRoutes.js
+<!-- Step 6.3 — Connect auth routes in server.js -->
+const authRoutes = require("./src/routes/authRoutes");
+<!-- Step 6.4 — Restart server -->
+<!-- Step 6.5 — Test signup route -->
+POST: http://localhost:5001/api/auth/signup
+body:
+{
+  "username": "sara",
+  "email": "sara@example.com",
+  "password": "secret123"
+}
+<!-- Step 6.6 — Verify in PostgreSQL -->
+SELECT id, username, email, role, password_hash FROM users ORDER BY id;
+<!-- Step 6.7 — Commit this phase -->
+git add .
+git commit -m "Add user signup route with bcrypt password hashing"
+Why this step matters:
+This is a major upgrade because now Echo Flow has:
+	•	real user creation
+	•	secure password storage
+	•	auth foundation for future login
+	•	base for protected routes later
+Without this, admin/user roles are just database rows.
+With this, user accounts become part of app behavior.
+<!-- 🧠 What RETURNING means (core idea) -->
+In PostgreSQL:
+👉 RETURNING tells the database to give you back data from the row you just inserted (or updated).
+Without it:
+	•	the DB inserts the row
+	•	but you get almost nothing back
+With it:
+	•	the DB inserts the row
+	•	and immediately sends you the row data
+<!-- 💬 Interview-level answer -->
+If asked:
+“What does RETURNING do in PostgreSQL?”
+You should say:
+“In PostgreSQL, the RETURNING clause allows me to get back the inserted or updated row immediately after the query runs. I use it to retrieve generated fields like IDs and timestamps without making a second query. It also helps ensure I return the exact data stored in the database to the client.”
+<!-- ⚙️ Your exact code -->
+1. Insert runs:
+username = 'sara'
+email = 'sara@example.com'
+password_hash = '$2b$10$...'
+role = 'user'
+2. Database generates extra fields:
+Because of your schema:
+3. RETURNING runs immediately:
+tells PostgreSQL:
+“After inserting, send me back these columns from the new row.”
+4. Result comes back to Node:
+result = {
+  rows: [
+    {
+      id: 3,
+      username: "sara",
+      email: "sara@example.com",
+      role: "user",
+      created_at: "2026-03-20T19:51:25.046Z"
+    }
+  ],
+  rowCount: 1
+}
+5. You use it here
+result.rows[0]
+Because:
+	•	rows is an array
+	•	you inserted one row → so it’s at index 0
+6. Send it to client
+res.status(201).json({
+  success: true,
+  user: result.rows[0]
+});
+❌ What happens WITHOUT RETURNING
+(empty array)
+You would NOT know:
+	•	what ID was created
+	•	what timestamp was assigned
+	•	what the final stored values look like
+🔥 Why RETURNING is important
+1. You get the generated ID immediately
+2. You get DB defaults
+3. You confirm what was actually saved
+4. You avoid extra queries
+⚠️ Why you didn’t return password_hash
+👉 You never want to send password hashes to the client.
+Even though it’s hashed, it is still sensitive.
+<!-- 💬 Interview-level answer -->
+If asked:
+“What is the array passed to pool.query for?”
+You should say:
+“I use a parameterized query where the SQL contains placeholders like $1, $2, and I pass the actual values as an array. This separates SQL logic from data, prevents SQL injection, and ensures values are safely inserted. I also normalize inputs like trimming strings and lowercasing emails before passing them.”
+<!-- 🚀 Phase 6.2 — Login route (password check) -->
+Now we build:
+POST /api/auth/login
+This route will:
+	1.	find user by email
+	2.	compare password with bcrypt
+	3.	return success or failure
+	4.	(next step later → return JWT)
+<!-- Step 6.2.1 — Add login route -->
+open: backend/src/routes/authRoutes.js
+Add this below signup route:
+<!-- Step 6.2.2 — Restart server -->
+cd backend
+npm run dev
+<!-- Step 6.2.3 — Test login -->
+POST: http://localhost:5001/api/auth/login
+body;
+{
+  "email": "sara@example.com",
+  "password": "secret123"
+}
+Wrong password:
+Wrong email:
+🔥We use the SAME message for:
+	•	wrong email
+	•	wrong password
+Why?
+👉 Prevents attackers from guessing valid emails.
+If you said:
+	•	“email not found”
+	•	“wrong password”
+Then attacker learns which emails exist.
+🔥 Why we don’t decrypt passwords
+We never “decrypt” passwords.
+Instead:
+	•	store hash
+	•	compare hash
+👉 One-way security
+<!-- Step 6.2.4 — Commit this phase -->
+git add .
+git commit -m "Add login route with bcrypt password comparison"
+👉What this phase means
+Now Echo Flow has:
+	•	user signup
+	•	password hashing
+	•	login verification
+	•	authentication foundation
+👉Where we are now
+You now have:
+	•	backend API
+	•	DB schema
+	•	moderation system
+	•	user system
+	•	login system
+
+🔥Why we cannot do this:
+if (password === user.password_hash)
+Because:
+	•	password is the raw plain-text password the user just typed
+	•	user.password_hash is the hashed version stored in the database
+They are completely different values.
+👉So the better interview answer is:
+We store only hashed passwords, not raw passwords. At login, the user sends a plain password, and bcrypt.compare() safely checks whether that plain password matches the stored hash. A direct equality check would fail because the raw password and the hash are different values.
+🔥what if we use Promises instead of async/await?
+Yes, you can absolutely use Promises instead of async/await.
+These are equivalent in idea.
+👉So which one should you use?
+For your project, async/await is better because:
+	•	easier to read
+	•	looks more like step-by-step logic
+	•	easier to debug
+	•	less nesting
+	•	cleaner for interview explanations
+Promises are not wrong.
+async/await is just cleaner in most backend route handlers.
+<!-- 💬 Interview-level answer -->
+If asked:
+“How does bcrypt compare passwords if hashes are different each time?”
+You answer:
+“bcrypt stores the salt inside the hash. During comparison, it extracts the salt from the stored hash, re-hashes the input password using that same salt, and then compares the full hash values. That’s why the comparison works even though hashing normally produces different outputs.”
+🧠 About this question
+“how bcrypt see the password when stored one is already hashed?”
+👉 bcrypt does NOT “see” the original password.
+Instead:
+	•	it takes your input password
+	•	hashes it AGAIN using the stored salt
+	•	compares results
+👉 It never decrypts anything.
+🔥 Final clarity sentence
+👉 bcrypt.compare creates a new hash using the original salt, and because both inputs are identical, the new hash equals the stored hash.
+<!-- 🚀 Phase 6.3 — JWT (Real Authentication System) -->
+🧠 What JWT does
+Right now:
+	•	user logs in
+	•	backend returns user data
+	•	but next request → user is “unknown” again
+JWT fixes that.
+👉 After login:
+	•	backend gives user a token
+	•	user sends that token in future requests
+	•	backend verifies it
+<!-- 🔐 Step 6.3.1 — Install JWT -->
+backend:
+npm install jsonwebtoken
+<!-- 🔐 Step 6.3.2 — Add JWT secret to .env -->
+backend/.env
+add this:
+JWT_SECRET=supersecretkey123
+<!-- 🔐 Step 6.3.3 — Update login route to return token -->
+backend/src/routes/authRoutes.js
+const jwt = require("jsonwebtoken");
+<!-- 🔐 Step 6.3.4 — Test login again -->
+POST:
+http://localhost:5001/api/auth/login
+body:
+{
+  "email": "sara@example.com",
+  "password": "secret123"
+}
+<!-- 🔐 Step 6.3.5 — Create auth middleware -->
+touch backend/src/middleware/authMiddleware.js
+<!-- 🔐 Step 6.3.6 — Create admin middleware -->
+touch backend/src/middleware/adminMiddleware.js
+<!-- 🔐 Step 6.3.7 — Protect admin route -->
+backend/src/routes/adminRoutes.js
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
+<!-- 🔐 Step 6.3.8 — Test JWT protection -->
+1. First make sure server is running
+npm run dev
+2. Login as normal user:
+POST: http://localhost:5001/api/auth/login
+body:
+{
+  "email": "sara@example.com",
+  "password": "secret123"
+}
+3. Test approve route with no token
+PATCH: http://localhost:5001/api/admin/approve/2
+No body. No authorization header.
+Expected:
+{
+  "message": "No token provided"
+}
+4. Test approve route with normal user token
+PATCH: http://localhost:5001/api/admin/approve/2
+Authorization: Bearer USER_TOKEN_HERE
+Expected:
+{
+  "message": "Admin access required"
+}
+5. Login as admin
+POST: http://localhost:5001/api/auth/login
+body:
+{
+  "email": "admin@example.com",
+  "password": "your_admin_password"
+}
+6. Test approve route with admin token
+PATCH: http://localhost:5001/api/admin/approve/2
+Authorization: Bearer ADMIN_TOKEN_HERE
+SELECT id, title, status FROM sources ORDER BY id;
+1. No token
+{ "message": "No token provided" }
+2. User token
+{ "message": "Admin access required" }
+3. Admin token
+{
+  "success": true,
+  "message": "Source approved successfully",
+  ...
+}
+<!-- 🔐 Step 6.3.9 — Commit -->
+git add .
+git commit -m "Add JWT authentication and protect admin routes"
+✅ One-line answer
+👉 The system identifies the user by email (or username), then checks the password only against that specific user’s stored hash.
+🔥Why store role inside the JWT token instead of querying the DB every time?
+Best interview answer
+“We store the role in the JWT so the backend can authorize requests without querying the database on every request. That improves performance and keeps middleware simple. Since the token is signed, the role claim can be trusted while the token is valid. The tradeoff is that role changes in the database are not reflected until the token expires or a new token is issued.”
+<!-- Phase 6.4 — Reject route for moderation -->
+Goal
+Create: PATCH /api/admin/reject/:id
+<!-- Step 1 — Update adminRoutes.js -->
+open: backend/src/routes/adminRoutes.js
+You should already have:
+	•	authMiddleware
+	•	adminMiddleware
+	•	approve route
+<!-- Step 2 — Make sure your status values are okay -->
+Right now your sources.status column is just:
+	•	VARCHAR(20)
+	•	default pending
+So rejected will work fine.
+No schema change is required yet.
+<!-- Step 3 — Restart backend -->
+<!-- Step 4 — Test the reject route -->
+PATCH http://localhost:5001/api/admin/reject/2
+Authorization: Bearer YOUR_ADMIN_TOKEN
+<!-- Step 5 — Verify in PostgreSQL -->
+SELECT id, title, status FROM sources ORDER BY id;
+<!-- Step 6 — Prove public feed still hides it -->
+call: GET /api/sources
+the rejected item should not appear.
+That proves your moderation pipeline now has two admin outcomes:
+	•	approved → public
+	•	rejected → hidden
+<!-- Step 7 — Commit -->
+git add .
+git commit -m "Add reject route for admin moderation"
+🔥 Small interview explanation
+If asked:
+“How does moderation work in Echo Flow?”
+You can now say:
+“New submissions are stored with a pending status. Admin-only protected routes allow moderators to either approve or reject a source. The public feed only returns approved content, so rejected and pending items stay hidden.”
+
+🔥 Current stage
+You’ve completed:
+	•	Git repo setup
+	•	backend bootstrap
+	•	PostgreSQL connection
+	•	schema
+	•	source submission
+	•	public approved feed
+	•	signup
+	•	login
+	•	bcrypt hashing
+	•	JWT auth
+	•	admin route protection
+	•	approve route
+	•	reject route
+So now you are in:
+secured backend MVP with moderation working
+<!-- 🚀Phase 7 — Voting system -->
+Goal
+Build a route that lets a logged-in user:
+	•	upvote a source
+	•	downvote a source
+	•	update their existing vote
+	•	prevent duplicate separate votes for same source by same user
+<!-- Step 7.1 — Create votes route file -->
+touch backend/src/routes/votesRoutes.js
+<!-- Step 7.2 — Connect votes route in server.js -->
+const votesRoutes = require("./src/routes/votesRoutes");
+<!-- Step 7.3 — Restart backend -->
+npm run dev
+<!-- Step 7.4 — Test with user token -->
+POST: http://localhost:5001/api/auth/login
+body:
+{
+  "email": "sara@example.com",
+  "password": "secret123"
+}
+Copy the token.
+<!-- Step 7.5 — Test upvote -->
+POST: http://localhost:5001/api/votes
+Authorization: Bearer USER_TOKEN_HERE
+body:
+{
+  "source_id": 1,
+  "vote_type": "up"
+}
+<!-- Step 7.6 — Test changing vote -->
+Now send again on the same source:
+body:
+{
+  "source_id": 1,
+  "vote_type": "down"
+}
+<!-- Step 7.7 — Verify in PostgreSQL -->
+SELECT id, user_id, source_id, vote_type FROM votes ORDER BY id;
+<!-- Step 7.8 — Commit this phase -->
+git add .
+git commit -m "Add authenticated voting route with upsert behavior"
+🔥 What this adds to Echo Flow
+Now users can interact with content, not just view it.
+You’ve added:
+	•	authenticated voting
+	•	one vote per user per source
+	•	vote updates without duplicates
+🔥 What you just added architecturally
+Echo Flow now supports:
+	•	authenticated user interaction
+	•	one vote per user per source
+	•	vote changes without duplicates
+That is a real platform feature, not just CRUD.
+🔥 Current stage
+You now have:
+	•	secured auth system
+	•	moderation system
+	•	public approved feed
+	•	voting system
+So Echo Flow is now at:
+secured backend MVP with moderation and user interaction
+🔥 Small interview version
+If asked how voting works, you can now say:
+“I built an authenticated voting route where a logged-in user can upvote or downvote a source. The database enforces one vote per user per source with a unique constraint, and I use PostgreSQL’s ON CONFLICT clause to update the existing vote instead of inserting duplicates.”
+<!-- 🚀Phase 8 — Bookmarks system -->
+Goal
+Let a logged-in user:
+	•	bookmark a source
+	•	avoid duplicate bookmarks
+	•	view their saved bookmarks
+	•	optionally remove a bookmark
+<!-- Step 8.1 — Create bookmarks route file -->
+touch backend/src/routes/bookmarksRoutes.js
+<!-- Step 8.2 — Connect bookmarks route in server.js -->
+const bookmarksRoutes = require("./src/routes/bookmarksRoutes");
+<!-- Step 8.3 — Restart backend -->
+npm run dev
+<!-- Step 8.4 — Test add bookmark -->
+POST http://localhost:5001/api/bookmarks
+Authorization: Bearer USER_TOKEN_HERE
+body:
+{
+  "source_id": 1
+}
+<!-- Step 8.5 — Test duplicate bookmark -->
+Send the same request again:
+{
+  "source_id": 1
+}
+expected:
+{
+  "success": true,
+  "message": "Source already bookmarked"
+}
+<!-- Step 8.6 — Test get my bookmarks -->
+GET:  http://localhost:5001/api/bookmarks
+Authorization: Bearer USER_TOKEN_HERE
+<!-- Step 8.7 — Test remove bookmark -->
+DELETE: http://localhost:5001/api/bookmarks/1
+Authorization: Bearer USER_TOKEN_HERE
+<!-- Step 8.8 — Verify in PostgreSQL -->
+SELECT id, user_id, source_id FROM bookmarks ORDER BY id;
+<!-- Step 8.9 — Commit this phase -->
+git add .
+git commit -m "Add authenticated bookmarks routes for create list and delete"
+🔥What this adds architecturally
+	•	vote on sources
+	•	save sources
+	•	manage saved items
+🔥Interview version:
+If asked how bookmarks work, you can say:
+“I added authenticated bookmark routes that let a user save, list, and remove bookmarks. The database enforces one bookmark per user per source with a unique constraint, and the API handles duplicates gracefully.”	
+<!-- 🚀Phase 9 — Category filtering for sources -->
+Goal
+Upgrade the public feed route so it can:
+	•	return all approved sources by default
+	•	optionally filter by category_id
+Later we can add:
+	•	platform filtering
+	•	search by title
+	•	pagination
+<!-- Step 9.1 — Update sourcesRoutes.js -->
+open: backend/src/routes/sourcesRoutes.js
+Find your current GET / route and replace it with this version:
+<!-- Step 9.2 — Restart backend -->
+npm run dev
+<!-- Step 9.3 — Check category IDs in database -->
+SELECT * FROM categories ORDER BY id;
+<!-- Step 9.4 — Test without filter -->
+GET:  http://localhost:5001/api/sources
+<!-- Step 9.5 — Test with category filter -->
+GET:  http://localhost:5001/api/sources?category_id=1
+<!-- Step 9.7 — Commit this phase -->
+git add .
+git commit -m "Add category filtering to public sources feed"
+🔥Interview version
+If asked how feed filtering works, you can say:
+“I extended the public sources route so it always returns approved content, and it can optionally filter by category using a query parameter. The backend validates the category ID, builds the SQL conditionally, and returns only the matching approved sources.”

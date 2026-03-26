@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("EchoFlow API is running...");
+  res.send("RelayFlow API is running...");
 });
 
 app.get("/db-test", async (req, res) => {
