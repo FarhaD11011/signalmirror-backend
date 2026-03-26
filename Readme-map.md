@@ -295,7 +295,6 @@ VALUES ('Technology'), ('World'), ('Science');
 
 SELECT * FROM users;
 SELECT * FROM categories;
-
 <!-- Step 4.4 — Restart backend -->
 <!-- Step 4.5 — Test source submission -->
 Make a POST request to:
@@ -322,7 +321,6 @@ You now have the first real business flow:
 	•	backend inserts into DB
 	•	source enters moderation lifecycle
 	•	system returns structured JSON
-
 🧠 What “validation” means (concept)
 When the client (frontend, Postman, etc.) sends data to your API:
 {
@@ -434,6 +432,7 @@ SELECT id, title, status FROM sources;
 <!-- Step 5.5 — Commit this stage -->
 git add .
 git commit -m "Add admin approval route for pending sources"
+git log --oneline
 <!-- Phase 5.2 — Public approved feed route -->
 Goal
 Create a route that returns only approved content.
@@ -458,12 +457,10 @@ SELECT id, title, status FROM sources ORDER BY id;
 <!-- Step 5.2.6 — Commit this stage -->
 git add .
 git commit -m "Add public feed route for approved sources only"
-
 <!-- Interview version of what you built so far -->
 You can now honestly say:
 “I built the backend foundation of Echo Flow with Node, Express, and PostgreSQL. I designed a relational schema for users, categories, sources, votes, and bookmarks. I implemented a moderation workflow where submitted content is stored as pending, admins can approve it, and the public feed only returns approved sources. I also tracked the rebuild from the start using Git so every major stage is visible in commit history.”
 That is already a strong project explanation.
-
 <!-- Interview-quality summary -->
 If an interviewer asks what this route does, you can say:
 “This POST route handles source submission. It reads the incoming JSON body, validates required fields like title, URL, and submitter ID, then inserts the new source into PostgreSQL using a parameterized query. Optional fields are converted to null if missing, and the database applies the default moderation status of pending. On success, the route returns the newly created row with a 201 status. On invalid input it returns 400, and on server or database failure it returns 500.”
@@ -501,6 +498,7 @@ SELECT id, username, email, role, password_hash FROM users ORDER BY id;
 <!-- Step 6.7 — Commit this phase -->
 git add .
 git commit -m "Add user signup route with bcrypt password hashing"
+git log --oneline
 Why this step matters:
 This is a major upgrade because now Echo Flow has:
 	•	real user creation
@@ -617,6 +615,7 @@ Instead:
 <!-- Step 6.2.4 — Commit this phase -->
 git add .
 git commit -m "Add login route with bcrypt password comparison"
+git log --oneline
 👉What this phase means
 Now Echo Flow has:
 	•	user signup
@@ -630,7 +629,6 @@ You now have:
 	•	moderation system
 	•	user system
 	•	login system
-
 🔥Why we cannot do this:
 if (password === user.password_hash)
 Because:
@@ -786,12 +784,12 @@ That proves your moderation pipeline now has two admin outcomes:
 <!-- Step 7 — Commit -->
 git add .
 git commit -m "Add reject route for admin moderation"
+git log --oneline
 🔥 Small interview explanation
 If asked:
 “How does moderation work in Echo Flow?”
 You can now say:
 “New submissions are stored with a pending status. Admin-only protected routes allow moderators to either approve or reject a source. The public feed only returns approved content, so rejected and pending items stay hidden.”
-
 🔥 Current stage
 You’ve completed:
 	•	Git repo setup
@@ -850,6 +848,7 @@ SELECT id, user_id, source_id, vote_type FROM votes ORDER BY id;
 <!-- Step 7.8 — Commit this phase -->
 git add .
 git commit -m "Add authenticated voting route with upsert behavior"
+git log --oneline
 🔥 What this adds to Echo Flow
 Now users can interact with content, not just view it.
 You’ve added:
@@ -914,6 +913,7 @@ SELECT id, user_id, source_id FROM bookmarks ORDER BY id;
 <!-- Step 8.9 — Commit this phase -->
 git add .
 git commit -m "Add authenticated bookmarks routes for create list and delete"
+git log --oneline
 🔥What this adds architecturally
 	•	vote on sources
 	•	save sources
@@ -943,7 +943,26 @@ GET:  http://localhost:5001/api/sources
 GET:  http://localhost:5001/api/sources?category_id=1
 <!-- Step 9.7 — Commit this phase -->
 git add .
-git commit -m "Add category filtering to public sources feed"
+git commit -m "Add category filtering to public sources 
+feed"
+git log --oneline
 🔥Interview version
 If asked how feed filtering works, you can say:
 “I extended the public sources route so it always returns approved content, and it can optionally filter by category using a query parameter. The backend validates the category ID, builds the SQL conditionally, and returns only the matching approved sources.”
+<!-- 🚀 Phase 10 — Vote Counts (make feed “real”) -->
+Goal
+Upgrade: GET /api/sources
+to return:
+{
+  "id": 1,
+  "title": "...",
+  "upvotes": 5,
+  "downvotes": 2,
+  "score": 3
+}
+<!-- Step 10.1 — Update sources query -->
+open: backend/src/routes/sourcesRoutes.js
+Replace your SELECT query with this:
+<!-- Step 10.2 — Keep category filter -->
+Below that, keep your existing logic:
+<!-- Step 10.3 — Add GROUP BY -->

@@ -7,11 +7,22 @@ const pool = require("../config/db");
 router.get("/", async (req, res) => {
   try {
     const { category_id } = req.query;
-    let query = `
-      SELECT *
-      FROM sources
-      WHERE status = 'approved'
-    `;
+      let query = `
+    SELECT
+      sources.*,
+      COALESCE(SUM(CASE WHEN votes.vote_type = 'up' THEN 1 ELSE 0 END), 0) AS upvotes,
+      COALESCE(SUM(CASE WHEN votes.vote_type = 'down' THEN 1 ELSE 0 END), 0) AS downvotes,
+      COALESCE(SUM(
+        CASE
+          WHEN votes.vote_type = 'up' THEN 1
+          WHEN votes.vote_type = 'down' THEN -1
+          ELSE 0
+        END
+      ), 0) AS score
+    FROM sources
+    LEFT JOIN votes ON sources.id = votes.source_id
+    WHERE sources.status = 'approved'
+  `;
     const values = [];
     if (category_id !== undefined) {
       const parsedCategoryId = Number(category_id);
@@ -20,10 +31,13 @@ router.get("/", async (req, res) => {
           message: "category_id must be a positive integer",
         });
       }
-      query += ` AND category_id = $1`;
+      query += ` AND sources.category_id = $1`;
       values.push(parsedCategoryId);
     }
-    query += ` ORDER BY created_at DESC`;
+    query += ` 
+      GROUP BY sources.id
+      ORDER BY sources.created_at DESC
+    `;
     const result = await pool.query(query, values);
     res.json({
       success: true,
