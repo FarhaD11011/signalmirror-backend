@@ -1079,3 +1079,47 @@ npm install cors
 const cors = require("cors");
 app.use(cors());
 <!-- Step 3 — Restart backend -->
+<!-- Step 5 — Commit the fix -->
+git add .
+git commit -m "Enable CORS for frontend-backend connection"
+git log --oneline -5
+<!-- Where you are now -->
+RelayFlow now has:
+Backend
+	•	auth (signup/login/JWT)
+	•	moderation (approve/reject)
+	•	voting + aggregation
+	•	bookmarks
+	•	category filtering
+
+Frontend
+	•	React app running
+	•	API connected
+	•	feed rendering correctly
+👉 This is no longer setup — this is a working product foundation.
+Where you are now
+
+RelayFlow now has:
+
+Backend
+	•	auth (signup/login/JWT)
+	•	moderation (approve/reject)
+	•	voting + aggregation
+	•	bookmarks
+	•	category filtering
+
+Frontend
+	•	React app running
+	•	API connected
+	•	feed rendering correctly
+
+<!-- 👉 This is no longer setup — this is a working product foundation. -->
+GET /api/sources?category_id=1
+<!-- Step 1 — Update App.jsx -->
+We will:
+	•	add categories state
+	•	add selected category
+	•	fetch categories
+	•	refetch sources when category changes
+Replace your App.jsx with this updated version:
+<!-- Step 2 — You need categories API -->

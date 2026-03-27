@@ -7,7 +7,7 @@ const adminRoutes = require("./src/routes/adminRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const votesRoutes = require("./src/routes/votesRoutes");
 const bookmarksRoutes = require("./src/routes/bookmarksRoutes");
-
+const categoriesRoutes = require("./src/routes/categoriesRoutes");
 
 
 dotenv.config();
@@ -46,9 +46,11 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api/votes", votesRoutes)
+app.use("/api/votes", votesRoutes);
 
-app.use("/api/bookmarks", bookmarksRoutes)
+app.use("/api/bookmarks", bookmarksRoutes);
+
+app.use("/api/categories", categoriesRoutes);
 
 
 
