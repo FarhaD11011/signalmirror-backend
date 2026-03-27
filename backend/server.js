@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const pool = require("./src/config/db");
 const sourcesRoutes = require("./src/routes/sourcesRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
@@ -14,6 +15,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {

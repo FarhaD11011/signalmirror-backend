@@ -1041,3 +1041,41 @@ Open src/main.jsx and make sure it still looks normal like this: code
 Then open src/index.css and replace it with: code
 <!-- Step 7 — Test again -->
 npm run dev
+<!-- Step 8 — Commit cleanup -->
+cd ..
+git add .
+git commit -m "Clean Vite starter files for RelayFlow frontend"
+<!-- Phase 11.2 — Fetch and render the public feed -->
+Goal:
+	•	call GET /api/sources
+	•	store results in React state
+	•	render approved sources on the page
+<!-- Step 1 — Update src/App.jsx -->
+Replace your current frontend/src/App.jsx with this:
+<!-- Step 2 — Make sure backend is running -->
+cd backend
+npm run dev
+<!-- Step 3 — Make sure frontend is running -->
+cd frontend
+npm run dev
+open:
+http://localhost:5173
+<!-- Step 5 — If you get a fetch error -->
+This is common the first time because of CORS.
+If browser shows an error instead of data, that likely means the backend needs CORS enabled.
+If that happens, tell me the exact browser error and we’ll fix it immediately.
+Error: Failed to fetch
+That is most likely CORS, not your React code.
+Your frontend is running on:
+	•	http://localhost:5173
+and backend is on:
+	•	http://localhost:5001
+Browsers treat those as different origins, so the backend must explicitly allow it.
+<!-- Fix CORS -->
+Step 1 — Install CORS in backend
+In backend:
+npm install cors
+<!-- Step 2 — Update backend/server.js -->
+const cors = require("cors");
+app.use(cors());
+<!-- Step 3 — Restart backend -->
