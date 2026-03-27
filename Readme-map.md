@@ -990,3 +990,44 @@ You now understand:
 instead of numbers.
 That usually happens because PostgreSQL aggregate results like SUM(...) are often returned by the Node pg driver as strings, especially for numeric/bigint-style results.
 So your SQL is correct — this is just a response formatting issue.
+<!-- Clean fix -->
+In backend/src/routes/sourcesRoutes.js, change the response part from:
+res.json({
+  success: true,
+  count: result.rows.length,
+  sources: result.rows,
+});
+to: code
+What this does
+It converts:
+	•	"0" → 0
+	•	"1" → 1
+	•	"-1" → -1
+So the API becomes cleaner for frontend use.
+<!-- Then commit it -->
+git add .
+git commit -m "Convert vote aggregation fields to numbers in sources feed"
+👉Where you are now
+RelayFlow backend now has:
+	•	authentication
+	•	authorization
+	•	moderation
+	•	voting
+	•	bookmarks
+	•	category filtering
+	•	vote counts in feed
+That is a real backend MVP.
+
+<!-- 🚀🚀Phase 11.1 — Initialize React frontend for RelayFlow -->
+<!-- Step 1 — Go into the project and frontend folder -->
+<!-- Step 2 — Create the React app with Vite -->
+When it asks questions, choose:
+	•	framework: React
+	•	variant: JavaScript
+Because you used . it will create the app inside your existing frontend folder.
+<!-- Step 3 — Install frontend dependencies -->
+npm install
+<!-- Step 4 — Run the frontend -->
+npm run dev
+You should see something like:
+Local: http://localhost:5173
