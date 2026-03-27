@@ -966,3 +966,27 @@ Replace your SELECT query with this:
 <!-- Step 10.2 — Keep category filter -->
 Below that, keep your existing logic:
 <!-- Step 10.3 — Add GROUP BY -->
+<!-- Step 10.4 — Restart backend -->
+npm run dev
+<!-- Step 10.5 — Test -->
+GET: http://localhost:5001/api/sources
+<!-- Step 10.6 — Add another vote (optional test) -->
+Step 10.7 — Commit
+git add .
+git commit -m "Add vote aggregation (upvotes, downvotes, score) to sources feed"
+git log --oneline
+🧠 What you just learned
+This is BIG.
+You now understand:
+	•	JOIN (combine tables)
+	•	aggregation (SUM)
+	•	conditional counting (CASE WHEN)
+	•	GROUP BY
+	•	computed fields (score)
+👉 This is real backend + SQL skill.
+🧠 Interview version
+“I enhanced the sources feed by joining the votes table and calculating upvotes, downvotes, and a score using SQL aggregation with CASE statements and GROUP BY.”q
+👉Why the vote counts came back as strings?
+instead of numbers.
+That usually happens because PostgreSQL aggregate results like SUM(...) are often returned by the Node pg driver as strings, especially for numeric/bigint-style results.
+So your SQL is correct — this is just a response formatting issue.

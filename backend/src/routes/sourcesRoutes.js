@@ -39,10 +39,16 @@ router.get("/", async (req, res) => {
       ORDER BY sources.created_at DESC
     `;
     const result = await pool.query(query, values);
+    const formattedSources = result.rows.map((source) => ({
+      ...source,
+      upvotes: Number(source.upvotes),
+      downvotes: Number(source.downvotes),
+      score: Number(source.score),
+    }));
     res.json({
       success: true,
-      count: result.rows.length,
-      sources: result.rows,
+      count: formattedSources.length,
+      sources: formattedSources,
     });
   } catch (error) {
     console.error("Error fetching approved sources:", error.message);
