@@ -1152,3 +1152,23 @@ git commit -m "Add category filter UI and categories API"
 	•	bookmarks
 	•	admin UI later
 <!-- Step 1 — Update App.jsx (add login state) -->
+Add these states at the top:
+const [user, setUser] = useState(null);
+const [token, setToken] = useState(null);
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+<!-- Step 2 — Add login function -->
+Inside App.jsx:
+<!-- Step 3 — Add login UI -->
+Above your feed, add:
+<!-- Step 4 — Test -->
+	1.	Refresh page
+	2.	Enter:
+	username: sara@example.com
+	password: secret123
+	3.	Click Login
+Expected result:
+Logged in as sara
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Add login UI and store JWT in frontend"
