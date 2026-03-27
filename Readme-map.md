@@ -1196,3 +1196,19 @@ We will add:
 	•	👎 button → send downvote
 	•	update UI immediately
 <!-- Step 1 — Add vote function -->
+Inside App.jsx, add this function:
+<!-- Step 2 — Replace vote display with buttons -->
+<!-- Step 3 — Test -->
+Case 1: Not logged in
+Click 👍
+Expected:
+You must be logged in to vote
+Case 2: Logged in (Sara)
+Click 👍 or 👎
+Expected:
+	•	page reloads
+	•	vote updates
+	•	numbers change
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Add voting buttons and integrate vote API in frontend"

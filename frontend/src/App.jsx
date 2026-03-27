@@ -18,20 +18,24 @@ function App() {
       try {
         const res = await fetch("http://localhost:5001/api/categories");
         const data = await res.json();
+
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch categories");
         }
+
         setCategories(data.categories || []);
       } catch (err) {
         console.error("Category fetch error:", err.message);
       }
     }
+
     fetchCategories();
   }, []);
 
   // ✅ login handler
   async function handleLogin(e) {
     e.preventDefault();
+
     try {
       const res = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
@@ -40,41 +44,81 @@ function App() {
         },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await res.json();
+
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
+
       setUser(data.user);
       setToken(data.token);
-      // ✅ store token in browser
       localStorage.setItem("token", data.token);
     } catch (err) {
       alert(err.message);
     }
   }
 
+  // ✅ logout handler
   function handleLogout() {
     setUser(null);
     setToken(null);
     localStorage.removeItem("token");
   }
 
+  // ✅ bookmark handler
+  async function handleBookmark(sourceId) {
+    try {
+      const savedToken = localStorage.getItem("token");
 
-  // ✅ fetch sources (with optional category filter)
+      if (!savedToken) {
+        alert("You must be logged in to bookmark");
+        return;
+      }
+
+      const res = await fetch("http://localhost:5001/api/bookmarks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${savedToken}`,
+        },
+        body: JSON.stringify({
+          source_id: sourceId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Bookmark failed");
+      }
+
+      alert(data.message || "Bookmark added successfully");
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  // ✅ fetch sources
   useEffect(() => {
     async function fetchSources() {
       try {
         setLoading(true);
         setError("");
+
         let url = "http://localhost:5001/api/sources";
+
         if (selectedCategory) {
           url += `?category_id=${selectedCategory}`;
         }
+
         const res = await fetch(url);
         const data = await res.json();
+
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch sources");
         }
+
         setSources(data.sources || []);
       } catch (err) {
         setError(err.message || "Something went wrong");
@@ -82,47 +126,14 @@ function App() {
         setLoading(false);
       }
     }
+
     fetchSources();
   }, [selectedCategory]);
-  
-
-
-async function handleVote(sourceId, voteType) {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be logged in to vote");
-      return;
-    }
-    const res = await fetch("http://localhost:5001/api/votes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        source_id: sourceId,
-        vote_type: voteType,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || "Vote failed");
-    }
-    // 🔥 refresh feed after voting
-    window.location.reload();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>RelayFlow</h1>
 
-      {/* ✅ login section */}
       {!user ? (
         <form onSubmit={handleLogin} style={{ marginBottom: "20px" }}>
           <input
@@ -132,6 +143,7 @@ async function handleVote(sourceId, voteType) {
             onChange={(e) => setEmail(e.target.value)}
             style={{ marginRight: "10px", padding: "8px" }}
           />
+
           <input
             type="password"
             placeholder="Password"
@@ -139,27 +151,30 @@ async function handleVote(sourceId, voteType) {
             onChange={(e) => setPassword(e.target.value)}
             style={{ marginRight: "10px", padding: "8px" }}
           />
+
           <button type="submit" style={{ padding: "8px 12px" }}>
             Login
           </button>
         </form>
       ) : (
         <div style={{ marginBottom: "20px" }}>
-            Logged in as{" "}
-            <strong>
-              {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
-            </strong>
-            <button
-              onClick={handleLogout}
-              style={{ marginLeft: "12px", padding: "8px 12px" }}
-            >
-              Logout
-            </button>
+          Logged in as{" "}
+          <strong>
+            {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
+          </strong>
+
+          <button
+            onClick={handleLogout}
+            style={{ marginLeft: "12px", padding: "8px 12px" }}
+          >
+            Logout
+          </button>
         </div>
       )}
-      {/* ✅ category filter */}
+
       <div style={{ marginBottom: "20px" }}>
         <label style={{ marginRight: "10px" }}>Select Category:</label>
+
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -173,7 +188,7 @@ async function handleVote(sourceId, voteType) {
           ))}
         </select>
       </div>
-      {/* ✅ loading / error / sources */}
+
       {loading ? (
         <h2>Loading...</h2>
       ) : error ? (
@@ -194,26 +209,24 @@ async function handleVote(sourceId, voteType) {
           >
             <h2>{source.title}</h2>
             <p>{source.summary}</p>
+
             <a href={source.url} target="_blank" rel="noreferrer">
               Visit Source
             </a>
+
+            <div style={{ marginTop: "10px" }}>
+              <button onClick={() => handleBookmark(source.id)}>
+                Bookmark
+              </button>
+            </div>
+
             <div style={{ marginTop: "10px" }}>
               <strong>Platform:</strong> {source.platform || "Unknown"}
             </div>
-            <div style={{ marginTop: "10px" }}>
-              <button
-                onClick={() => handleVote(source.id, "up")}
-                style={{ marginRight: "10px" }}
-              >
-                👍 {source.upvotes}
-              </button>
-              <button
-                onClick={() => handleVote(source.id, "down")}
-                style={{ marginRight: "10px" }}
-              >
-                👎 {source.downvotes}
-              </button>
-              <span>Score: {source.score}</span>
+
+            <div style={{ marginTop: "6px" }}>
+              👍 {source.upvotes} | 👎 {source.downvotes} | Score:{" "}
+              {source.score}
             </div>
           </div>
         ))
