@@ -1172,3 +1172,27 @@ Logged in as sara
 <!-- Step 5 — Commit -->
 git add .
 git commit -m "Add login UI and store JWT in frontend"
+<!-- 1. Capitalize first letter of username -->
+Logged in as{" "}
+<strong>
+  {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
+</strong>
+<!-- 2. Add logout button -->
+Put it below handleLogin:
+function handleLogout() {
+  setUser(null);
+  setToken(null);
+  localStorage.removeItem("token");
+}
+<!-- commit it -->
+git add .           
+git commit -m "Add logout functionality and capitalize username display in frontend"
+<!-- 🚀 Phase 11.5 — Clickable Voting (Frontend → Backend) -->
+Right now:
+	•	votes show ✅
+	•	but user cannot click ❌
+We will add:
+	•	👍 button → send upvote
+	•	👎 button → send downvote
+	•	update UI immediately
+<!-- Step 1 — Add vote function -->

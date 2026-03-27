@@ -84,6 +84,39 @@ function App() {
     }
     fetchSources();
   }, [selectedCategory]);
+  
+
+
+async function handleVote(sourceId, voteType) {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to vote");
+      return;
+    }
+    const res = await fetch("http://localhost:5001/api/votes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        source_id: sourceId,
+        vote_type: voteType,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Vote failed");
+    }
+    // 🔥 refresh feed after voting
+    window.location.reload();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -167,9 +200,20 @@ function App() {
             <div style={{ marginTop: "10px" }}>
               <strong>Platform:</strong> {source.platform || "Unknown"}
             </div>
-            <div style={{ marginTop: "6px" }}>
-              👍 {source.upvotes} | 👎 {source.downvotes} | Score:{" "}
-              {source.score}
+            <div style={{ marginTop: "10px" }}>
+              <button
+                onClick={() => handleVote(source.id, "up")}
+                style={{ marginRight: "10px" }}
+              >
+                👍 {source.upvotes}
+              </button>
+              <button
+                onClick={() => handleVote(source.id, "down")}
+                style={{ marginRight: "10px" }}
+              >
+                👎 {source.downvotes}
+              </button>
+              <span>Score: {source.score}</span>
             </div>
           </div>
         ))
