@@ -1123,3 +1123,32 @@ We will:
 	•	refetch sources when category changes
 Replace your App.jsx with this updated version:
 <!-- Step 2 — You need categories API -->
+You don’t have this yet:
+GET /api/categories
+Add it quickly
+Create new route:
+touch backend/src/routes/categoriesRoutes.js
+Then in server.js:
+const categoriesRoutes = require("./src/routes/categoriesRoutes");
+app.use("/api/categories", categoriesRoutes);
+Restart backend.
+<!-- Step 3 — Test -->
+Now your frontend should show:
+	•	dropdown: Technology / World / Science
+	•	selecting one filters the feed
+<!-- Step 4 — Commit -->
+git add .
+git commit -m "Add category filter UI and categories API"
+<!-- 🚀Phase 11.4 — Login UI + Auth State -->
+1. Login form
+	•	email + password
+	•	call /api/auth/login
+2. Store token
+	•	save JWT in localStorage
+3. Track user state
+	•	show “logged in” vs “not logged in”
+4. Prepare for:
+	•	voting buttons
+	•	bookmarks
+	•	admin UI later
+<!-- Step 1 — Update App.jsx (add login state) -->
