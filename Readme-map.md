@@ -1030,4 +1030,14 @@ npm install
 <!-- Step 4 — Run the frontend -->
 npm run dev
 You should see something like:
-Local: http://localhost:5173
+Local: http://localhost:5173/
+<!-- Step 5 — Make first frontend commit -->
+git add .
+git commit -m "Initialize RelayFlow frontend with React and Vite"
+<!-- Step 6 — Clean the starter files -->
+cd frontend
+Open src/App.jsx and replace everything with: code 
+Open src/main.jsx and make sure it still looks normal like this: code
+Then open src/index.css and replace it with: code
+<!-- Step 7 — Test again -->
+npm run dev
