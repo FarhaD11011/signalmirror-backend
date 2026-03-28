@@ -1285,3 +1285,22 @@ Expected:
 	•	success alert appears
 	•	bookmark disappears from My Bookmarks
 	•	no page reload needed
+<!-- Step 7 — Commit it -->
+git add .
+git commit -m "Add remove bookmark functionality to frontend"
+
+🔥What just happened technically
+When you clicked Remove Bookmark:
+	•	frontend sent a DELETE request
+	•	backend removed Sara’s bookmark
+	•	frontend called fetchBookmarks()
+	•	React state updated
+	•	UI re-rendered immediately
+That is the correct full-stack loop.
+<!-- 🚀 Next Phase — 11.7 Persist Login on Page Refresh -->
+Goal
+Right now, if the page refreshes, one of these usually happens:
+	•	user gets logged out visually
+	•	token may still exist in localStorage
+	•	UI does not fully restore auth state
+<!-- Step 1 — Add restore-auth useEffect -->

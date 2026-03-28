@@ -32,6 +32,18 @@ function App() {
   }, []);
 
 
+     // ✅ 
+    useEffect(() => {
+      const savedToken = localStorage.getItem("token");
+      const savedUser = localStorage.getItem("user");
+      if (savedToken && savedUser) {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+        fetchBookmarks();
+      }
+    }, []);
+
+
   // ✅ login handler
   async function handleLogin(e) {
     e.preventDefault();
@@ -50,6 +62,7 @@ function App() {
       setUser(data.user);
       setToken(data.token);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
       fetchBookmarks();
     } catch (err) {
       alert(err.message);
@@ -63,6 +76,7 @@ function App() {
     setToken(null);
     setBookmarks([]);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
 
