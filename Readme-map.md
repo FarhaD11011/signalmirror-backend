@@ -1212,3 +1212,31 @@ Expected:
 <!-- Step 5 — Commit -->
 git add .
 git commit -m "Add voting buttons and integrate vote API in frontend"
+<!-- 🔥Step 1 — Add bookmark handler -->
+Inside App.jsx, add this function below handleVote or below handleLogout if you have not added vote yet:
+<!-- Step 2 — Add bookmark button to each source card -->
+<!-- Step 4 — Test it -->
+While logged in as Sara:
+	•	click Bookmark
+	•	you should get:
+	•	Bookmark added successfully
+	•	or Source already bookmarked
+If logged out:
+	•	you should get:
+	•	You must be logged in to bookmark
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Add bookmark button and integrate bookmarks API in frontend"
+🧠 Why this separation is GOOD
+You don’t want to:
+	•	send useless requests ❌
+	•	depend on backend for everything ❌
+So you:
+	•	block obvious issues early ✅
+	•	handle real failures later ✅
+🔥 Important concept (interview-level)
+You are doing:
+👉 Client-side validation + server-side error handling
+That’s exactly how real apps work.
+
+<!-- 🔥Step 1 — Add bookmarks state -->
