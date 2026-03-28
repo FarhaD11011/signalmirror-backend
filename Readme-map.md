@@ -1,5 +1,6 @@
 
-2026-EchoFlow
+2026-RelayFlow
+Track, review, and relay source-linked content.
 <!-- 
 Phase 0 — Git-first foundation -->
 
@@ -1240,3 +1241,47 @@ You are doing:
 That’s exactly how real apps work.
 
 <!-- 🔥Step 1 — Add bookmarks state -->
+<!-- 🚀 Phase 11.5 — Bookmarks List UI -->
+Goal
+When the user is logged in:
+	•	fetch their bookmarks
+	•	display them in the UI
+	•	refresh bookmarks after adding one
+	•	clear bookmarks on logout
+<!-- Step 1 — Make sure bookmarks state exists -->
+At the top of App.jsx, confirm you have:
+<!-- Step 2 — Add fetchBookmarks() function -->
+Inside App.jsx, place this below handleBookmark:
+<!-- Step 3 — Load bookmarks right after login -->
+add, Inside handleLogin, after this part:
+<!-- Step 4 — Refresh bookmarks after user adds one -->
+<!-- Step 5 — Clear bookmarks on logout -->
+<!-- Step 6 — Add the “My Bookmarks” UI block -->
+<!-- Step 7 — Test it -->
+<!-- Step 8 — Commit it -->
+Add bookmarks list UI for logged-in users
+<!-- 🚀 Phase 11.6 — Remove Bookmark from UI -->
+Goal
+Let the logged-in user:
+	•	remove a saved bookmark
+	•	see the bookmarks list update immediately
+	•	manage bookmarks like a real product
+<!-- Step 1 — Make sure backend remove route exists -->
+It should be something like:
+	•	DELETE /api/bookmarks/:sourceId
+<!-- Step 2 — Add handleRemoveBookmark() in App.jsx -->
+Inside App.jsx, add this function below fetchBookmarks():
+<!-- Step 3 — Add remove button inside My Bookmarks -->
+<!-- Step 4 — Why we use bookmark.source_id -->
+This is important.
+Your delete endpoint should usually remove bookmark by the original source id, not by bookmark row id.
+<!-- Step 5 — Test it -->
+Expected:
+	•	My Bookmarks section appears
+	•	existing bookmark shows
+	•	each bookmark now has Remove Bookmark button
+Click Remove Bookmark
+Expected:
+	•	success alert appears
+	•	bookmark disappears from My Bookmarks
+	•	no page reload needed

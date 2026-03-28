@@ -120,6 +120,33 @@ function App() {
   }
 
 
+    async function handleRemoveBookmark(sourceId) {
+    try {
+      const savedToken = localStorage.getItem("token");
+      if (!savedToken) {
+        alert("You must be logged in.");
+        return;
+      }
+      const res = await fetch(`http://localhost:5001/api/bookmarks/${sourceId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to remove bookmark");
+      }
+      alert(data.message || "Bookmark removed successfully");
+      fetchBookmarks();
+    } catch (err) {
+      console.error("Remove bookmark error:", err.message);
+      alert(err.message);
+    }
+  }
+
+
+
   // ✅ fetch sources
   useEffect(() => {
     async function fetchSources() {
@@ -145,10 +172,10 @@ function App() {
     fetchSources();
   }, [selectedCategory]);
 
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>RelayFlow</h1>
-
       {!user ? (
         <form onSubmit={handleLogin} style={{ marginBottom: "20px" }}>
           <input
@@ -199,25 +226,38 @@ function App() {
             <p>No bookmarks yet.</p>
           ) : (
             bookmarks.map((bookmark) => (
-              <div
-                key={bookmark.bookmark_id}
+            <div
+              key={bookmark.bookmark_id}
+              style={{
+                padding: "10px 0",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <strong>{bookmark.title}</strong>
+              <div style={{ marginTop: "6px" }}>
+                <a href={bookmark.url} target="_blank" rel="noreferrer">
+                  Visit Source
+                </a>
+              </div>
+              <button
+                onClick={() => handleRemoveBookmark(bookmark.source_id)}
                 style={{
-                  padding: "10px 0",
-                  borderBottom: "1px solid #eee",
+                  marginTop: "8px",
+                  padding: "6px 10px",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  background: "#dc3545",
+                  color: "white",
                 }}
               >
-                <strong>{bookmark.title}</strong>
-                <div>
-                  <a href={bookmark.url} target="_blank" rel="noreferrer">
-                    Visit Source
-                  </a>
-                </div>
-              </div>
+                Remove Bookmark
+              </button>
+            </div>
             ))
           )}
         </div>
       )}
-
       <div style={{ marginBottom: "20px" }}>
         <label style={{ marginRight: "10px" }}>Select Category:</label>
         <select
@@ -253,7 +293,6 @@ function App() {
           >
             <h2>{source.title}</h2>
             <p>{source.summary}</p>
-
             <a href={source.url} target="_blank" rel="noreferrer">
               Visit Source
             </a>
