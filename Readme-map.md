@@ -1323,3 +1323,44 @@ We want the UI to become smarter so it can show something like:
 	•	or swap it to Remove Bookmark
 This makes the app feel much more polished.
 <!-- Step 1 — Add helper function -->
+Yes — I can see the exact problem.
+You put this line near the top of the component:
+const bookmarked = isBookmarked(source.id);
+That crashes because source only exists inside this part:
+sources.map((source) => ...)
+🔥🔥Exact fixes you need
+1. Delete this line completely
+Remove this from near the top of App.jsx:
+2. Fix the My Bookmarks section
+Right now, inside bookmarks.map(...), you accidentally inserted the wrong button.
+You currently have this inside the bookmark list:
+In My Bookmarks, the button should be:
+3. Add the bookmarked logic in the sources list, not at the top
+🔥In short, your mistakes were
+Mistake 1
+You used source.id outside sources.map(...)
+Mistake 2
+You placed the new bookmark-state button inside the My Bookmarks section instead of the sources section
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Show bookmark state in source cards"
+Test after pasting this
+Do this exact flow:
+	1.	run app
+	2.	log in as Sara
+	3.	if item is not bookmarked, button should say Bookmark
+	4.	click it
+	5.	it should appear in My Bookmarks
+	6.	source card button should become Bookmarked
+	7.	click Remove Bookmark
+	8.	bookmark should disappear
+	9.	source card button should go back to Bookmark
+If this works, commit with:
+<!-- 🚀 Phase 11.9 — Improve login form UX -->
+Goal
+Make the login area feel cleaner and more product-like by:
+	•	clearing email/password after successful login
+	•	preventing accidental empty submits
+	•	optionally showing a small heading
+This is a smaller polish phase, but it improves the feel of the app.
+<!-- Step 1 — Prevent empty login submits -->

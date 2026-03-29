@@ -14,31 +14,29 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   // ✅ fetch categories
   useEffect(() => {
     async function fetchCategories() {
       try {
         const res = await fetch("http://localhost:5001/api/categories");
         const data = await res.json();
-
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch categories");
         }
-
         setCategories(data.categories || []);
       } catch (err) {
         console.error("Category fetch error:", err.message);
       }
     }
-
     fetchCategories();
   }, []);
+
 
   // ✅ restore login on page refresh
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
-
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
@@ -46,10 +44,15 @@ function App() {
     }
   }, []);
 
+
+
   // ✅ login handler
   async function handleLogin(e) {
     e.preventDefault();
-
+    if (!email.trim() || !password.trim()) {
+      alert("Please enter both email and password");
+      return;
+    }
     try {
       const res = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
@@ -58,22 +61,22 @@ function App() {
         },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
-
       setUser(data.user);
       setToken(data.token);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       fetchBookmarks();
-    } catch (err) {
-      alert(err.message);
+      setEmail("");
+      setPassword("");
+      } catch (err) {
+        alert(err.message);
+      }
     }
-  }
+
 
   // ✅ logout handler
   function handleLogout() {
@@ -84,16 +87,15 @@ function App() {
     localStorage.removeItem("user");
   }
 
+
   // ✅ add bookmark
   async function handleBookmark(sourceId) {
     try {
       const savedToken = localStorage.getItem("token");
-
       if (!savedToken) {
         alert("You must be logged in to bookmark");
         return;
       }
-
       const res = await fetch("http://localhost:5001/api/bookmarks", {
         method: "POST",
         headers: {
@@ -104,13 +106,10 @@ function App() {
           source_id: sourceId,
         }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Bookmark failed");
       }
-
       alert(data.message || "Bookmark added successfully");
       fetchBookmarks();
     } catch (err) {
@@ -118,44 +117,39 @@ function App() {
     }
   }
 
+
   // ✅ fetch bookmarks
   async function fetchBookmarks() {
     try {
       const savedToken = localStorage.getItem("token");
-
       if (!savedToken) {
         setBookmarks([]);
         return;
       }
-
       const res = await fetch("http://localhost:5001/api/bookmarks", {
         headers: {
           Authorization: `Bearer ${savedToken}`,
         },
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Failed to fetch bookmarks");
       }
-
       setBookmarks(data.bookmarks || []);
     } catch (err) {
       console.error("Bookmark fetch error:", err.message);
     }
   }
 
+
   // ✅ remove bookmark
   async function handleRemoveBookmark(sourceId) {
     try {
       const savedToken = localStorage.getItem("token");
-
       if (!savedToken) {
         alert("You must be logged in.");
         return;
       }
-
       const res = await fetch(
         `http://localhost:5001/api/bookmarks/${sourceId}`,
         {
@@ -165,13 +159,10 @@ function App() {
           },
         }
       );
-
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Failed to remove bookmark");
       }
-
       alert(data.message || "Bookmark removed successfully");
       fetchBookmarks();
     } catch (err) {
@@ -180,11 +171,13 @@ function App() {
     }
   }
 
+
   // ✅ helper: check whether a source is already bookmarked
   function isBookmarked(sourceId) {
     if (!Array.isArray(bookmarks)) return false;
     return bookmarks.some((bookmark) => bookmark?.source_id === sourceId);
   }
+
 
   // ✅ fetch sources
   useEffect(() => {
@@ -192,20 +185,15 @@ function App() {
       try {
         setLoading(true);
         setError("");
-
         let url = "http://localhost:5001/api/sources";
-
         if (selectedCategory) {
           url += `?category_id=${selectedCategory}`;
         }
-
         const res = await fetch(url);
         const data = await res.json();
-
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch sources");
         }
-
         setSources(data.sources || []);
       } catch (err) {
         setError(err.message || "Something went wrong");
@@ -213,36 +201,44 @@ function App() {
         setLoading(false);
       }
     }
-
     fetchSources();
   }, [selectedCategory]);
+
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>RelayFlow</h1>
 
       {!user ? (
-        <form onSubmit={handleLogin} style={{ marginBottom: "20px" }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ marginRight: "10px", padding: "8px" }}
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ marginRight: "10px", padding: "8px" }}
-          />
-
-          <button type="submit" style={{ padding: "8px 12px" }}>
-            Login
-          </button>
-        </form>
+        <form
+            onSubmit={handleLogin}
+            style={{
+              marginBottom: "20px",
+              background: "white",
+              padding: "16px",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>Login</h2>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{ marginRight: "10px", padding: "8px" }}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ marginRight: "10px", padding: "8px" }}
+            />
+            <button type="submit" style={{ padding: "8px 12px" }}>
+              Login
+            </button>
+          </form>
       ) : (
         <div style={{ marginBottom: "20px" }}>
           Logged in as{" "}
@@ -269,7 +265,6 @@ function App() {
           }}
         >
           <h2>My Bookmarks</h2>
-
           {bookmarks.length === 0 ? (
             <p>No bookmarks yet.</p>
           ) : (
@@ -288,7 +283,6 @@ function App() {
                     Visit Source
                   </a>
                 </div>
-
                 <button
                   onClick={() => handleRemoveBookmark(bookmark.source_id)}
                   style={{
@@ -334,7 +328,6 @@ function App() {
       ) : (
         sources.map((source) => {
           const bookmarked = isBookmarked(source.id);
-
           return (
             <div
               key={source.id}
@@ -348,11 +341,9 @@ function App() {
             >
               <h2>{source.title}</h2>
               <p>{source.summary}</p>
-
               <a href={source.url} target="_blank" rel="noreferrer">
                 Visit Source
               </a>
-
               <div style={{ marginTop: "10px" }}>
                 <button
                   onClick={() => handleBookmark(source.id)}
@@ -370,11 +361,9 @@ function App() {
                   {bookmarked ? "Bookmarked" : "Bookmark"}
                 </button>
               </div>
-
               <div style={{ marginTop: "10px" }}>
                 <strong>Platform:</strong> {source.platform || "Unknown"}
               </div>
-
               <div style={{ marginTop: "6px" }}>
                 👍 {source.upvotes} | 👎 {source.downvotes} | Score:{" "}
                 {source.score}
