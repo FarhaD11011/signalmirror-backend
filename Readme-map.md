@@ -1304,3 +1304,22 @@ Right now, if the page refreshes, one of these usually happens:
 	•	token may still exist in localStorage
 	•	UI does not fully restore auth state
 <!-- Step 1 — Add restore-auth useEffect -->
+Inside App.jsx, add a new useEffect like this:
+<!-- Step 2 — Save user in localStorage on login -->
+Inside handleLogin, after successful login, make sure you store both token and user.
+<!-- Step 3 — Clear saved user on logout -->
+Update handleLogout to:
+<!-- Step 5 — Test it -->
+<!-- Step 6 — Commit -->
+git add .
+git commit -m "Persist login state on page refresh"
+<!-- 🚀 Phase 11.8 — Show correct bookmark button state -->
+Goal
+Right now the main source card still always shows:
+even if the item is already bookmarked.
+We want the UI to become smarter so it can show something like:
+	•	Bookmarked
+	•	or disable the button
+	•	or swap it to Remove Bookmark
+This makes the app feel much more polished.
+<!-- Step 1 — Add helper function -->
