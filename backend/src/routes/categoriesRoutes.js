@@ -3,12 +3,12 @@ const pool = require("../config/db");
 
 const router = express.Router();
 
+
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM categories ORDER BY id"
     );
-
     res.json({
       success: true,
       categories: result.rows,

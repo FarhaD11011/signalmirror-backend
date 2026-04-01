@@ -1586,3 +1586,58 @@ Now we add the other moderation action:
 	•	keep it out of public feed
 This completes the moderation pair.
 <!-- Step 1 — Add handleRejectSource() -->
+Inside App.jsx, below handleApproveSource(), add:
+<!-- Step 2 — Add Reject button in Pending Sources UI -->
+In your Pending Sources block, you currently have an Approve button.
+Update that button area to include both buttons.
+Replace this:
+<!-- Step 3 — Test it -->
+Since your pending source is now approved, create or reset one pending source again.
+Use SQL:
+relayflow=#
+UPDATE sources
+SET status = 'pending'
+WHERE id = 3;
+<!-- Step 4 — Verify in database -->
+Run:
+SELECT id, title, status
+FROM sources
+ORDER BY id;
+id |        title        |  status  
+----+---------------------+----------
+  1 | Ocean News Example  | approved
+  2 | Ocean News Example  | rejected
+  3 | Pending Ocean Story | rejected
+(3 rows)
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Add reject action to admin pending sources UI"
+<!-- Interview-style understanding -->
+If I were interviewing you, I would expect you to say:
+We added an admin moderation workflow where submitted sources start as pending, admins can approve or reject them, approved items become visible in the main feed, rejected items are removed from the pending queue and are not shown publicly, and the frontend refreshes state after moderation so the UI stays in sync with the database.
+<!-- 🚀 Phase 12.2 — Enforce Feed Filtering Rules -->
+<!-- Step 1 — Send the backend code for GET /api/sources -->
+🚀 Final Verdict for Phase 12.2
+✅ Public feed is correctly filtered
+✅ Rejected sources are hidden
+✅ Pending sources are hidden
+✅ Query is safe + optimized
+✅ API response is clean
+👉 Phase 12.2 is COMPLETE
+<!-- 🚀 Phase 13.0 — Prevent Duplicate Source Submission -->
+🎯 Goal of Phase 13.0
+Before inserting a new source, the backend should check:
+	•	does this URL already exist?
+	•	if yes, stop the insert
+	•	return a clear message to the frontend
+	•	keep database cleaner
+<!-- 🚀 Step 1 — Find the source submission route -->
+<!-- ✅ Step 1 — Review current submit route -->
+our current route already does these well:
+	•	validates title
+	•	validates url
+	•	validates submitter_id
+	•	inserts source as pending by default through DB schema behavior
+	•	returns clean success response
+So the only missing piece is:
+👉 check whether this URL already exists before insert

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
 
+
 // ✅ GET /api/sources
 // public feed: only approved sources, optionally filtered by category
 router.get("/", async (req, res) => {
@@ -89,6 +90,28 @@ router.post("/", async (req, res) => {
     if (!submitter_id || typeof submitter_id !== "number") {
     return res.status(400).json({ message: "Valid submitter_id is required" });
     }
+    // ✅ normalize URL a little
+    const cleanUrl = url.trim();
+
+    // ✅ check for duplicate URL before insert
+    const existingSource = await pool.query(
+      `
+      SELECT id, title, status
+      FROM sources
+      WHERE url = $1
+      LIMIT 1;
+      `,
+      [cleanUrl]
+    );
+    if (existingSource.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "This source has already been submitted.",
+        existingSource: existingSource.rows[0],
+      });
+    }
+
+    // ✅ insert only if URL does not already exist
     const result = await pool.query(
       `
       INSERT INTO sources
