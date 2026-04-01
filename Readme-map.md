@@ -1465,5 +1465,23 @@ So Phase 12.0 frontend is successful.
 <!-- Step 9 — Commit -->
 git add .
 git commit -m "Add admin pending sources approval UI"
-
-<!-- 🚀 Phase 12.0.1 — Add pending sources admin route -->
+First fix we already know:
+Change handleApproveSource()
+replace with:
+const res = await fetch(`http://localhost:5001/api/admin/approve/${sourceId}`, {
+  method: "PATCH",
+  headers: {
+    Authorization: `Bearer ${savedToken}`,
+  },
+});
+Your adminRoutes.js has:
+	•	PATCH /api/admin/approve/:id
+	•	PATCH /api/admin/reject/:id
+But it does not have:
+	•	GET /api/admin/pending
+That is why the frontend shows:
+No pending sources...
+and earlier got a 404 for the pending fetch.
+So the next step is not frontend now.
+The next step is to add the pending list route to Express.
+<!-- 🚀 🚀Phase 12.0.1 — Add pending sources admin route -->

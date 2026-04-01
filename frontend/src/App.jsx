@@ -156,7 +156,7 @@ function App() {
       setPendingSources([]);
       return;
     }
-    const res = await fetch("http://localhost:5001/api/admin/sources/pending", {
+    const res = await fetch("http://localhost:5001/api/admin/pending", {
       headers: {
         Authorization: `Bearer ${savedToken}`,
       },

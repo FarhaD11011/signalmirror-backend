@@ -5,6 +5,37 @@ const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 
+// ✅ GET /api/admin/pending
+router.get(
+  "/pending",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const result = await pool.query(
+        `
+        SELECT *
+        FROM sources
+        WHERE status = 'pending'
+        ORDER BY created_at DESC;
+        `
+      );
+      res.json({
+        success: true,
+        sources: result.rows,
+      });
+    } catch (error) {
+      console.error("Error fetching pending sources:", error.message);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch pending sources",
+        error: error.message,
+      });
+    }
+  }
+);
+
+
 // ✅ PATCH /api/admin/approve/:id
 router.patch(
     "/approve/:id", 
@@ -42,6 +73,7 @@ router.patch(
     });
   }
 });
+
 
 // ✅ PATCH /api/admin/reject/:id
 router.patch(
