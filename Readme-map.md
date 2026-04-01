@@ -1,6 +1,7 @@
 
 2026-RelayFlow
 Track, review, and relay source-linked content.
+RelayFlow = platform relays outside source-linked content
 <!-- 
 Phase 0 — Git-first foundation -->
 
@@ -1364,3 +1365,36 @@ Make the login area feel cleaner and more product-like by:
 	•	optionally showing a small heading
 This is a smaller polish phase, but it improves the feel of the app.
 <!-- Step 1 — Prevent empty login submits -->
+At the start of handleLogin, right after e.preventDefault();, add:
+<!-- Step 2 — Clear login inputs after successful login -->
+Inside handleLogin add:
+setEmail("");
+setPassword("");
+<!-- Step 3 — Optional small login card styling -->
+You can keep your current login form, but a nicer version would be:
+<!-- Step 4 — Test it -->
+<!-- Step 5 — Commit -->
+git add .
+git commit -m "Improve login form validation and UX"
+<!-- 🚀 🚀 Phase 12.0 — Admin Approval UI -->
+Goal
+Right now, approved sources show in the public feed.
+Now we want the admin side to become visible in the frontend so an admin can:
+	•	see pending submissions
+	•	approve them
+	•	reject or delete them later
+	•	manage the flow like a real moderation product
+This is one of the most important RelayFlow features.
+<!-- Step 1 — Add pending sources state -->
+At the top of App.jsx, add:
+Step 2 — Add fetchPendingSources()
+Inside App.jsx, add this function below fetchBookmarks():
+<!-- Step 3 — Load pending sources after login if user is admin -->
+Inside handleLogin, after: fetchbookmarks(),
+add:
+if (data.user.is_admin) {
+  fetchPendingSources();
+}
+<!-- Step 4 — Restore pending sources on refresh for admin -->
+Inside your auth restore useEffect, after:
+fetchBookmarks();

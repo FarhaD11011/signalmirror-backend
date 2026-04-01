@@ -5,12 +5,11 @@ function App() {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [sources, setSources] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
-
+  const [pendingSources, setPendingSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -35,15 +34,18 @@ function App() {
 
   // ✅ restore login on page refresh
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-      fetchBookmarks();
+  const savedToken = localStorage.getItem("token");
+  const savedUser = localStorage.getItem("user");
+  if (savedToken && savedUser) {
+    const parsedUser = JSON.parse(savedUser);
+    setToken(savedToken);
+    setUser(parsedUser);
+    fetchBookmarks();
+    if (parsedUser.role === "admin") {
+    fetchPendingSources();
+   }
     }
   }, []);
-
 
 
   // ✅ login handler
@@ -62,6 +64,7 @@ function App() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
+      console.log("LOGIN USER:", data.user);
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
@@ -70,10 +73,13 @@ function App() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       fetchBookmarks();
+      if (data.user.role === "admin") {
+        fetchPendingSources();
+      }
       setEmail("");
       setPassword("");
       } catch (err) {
-        alert(err.message);
+        alert(err.message);ß
       }
     }
 
@@ -83,6 +89,7 @@ function App() {
     setUser(null);
     setToken(null);
     setBookmarks([]);
+    setPendingSources([]);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   }
@@ -140,6 +147,29 @@ function App() {
       console.error("Bookmark fetch error:", err.message);
     }
   }
+
+
+  async function fetchPendingSources() {
+  try {
+    const savedToken = localStorage.getItem("token");
+    if (!savedToken) {
+      setPendingSources([]);
+      return;
+    }
+    const res = await fetch("http://localhost:5001/api/admin/sources/pending", {
+      headers: {
+        Authorization: `Bearer ${savedToken}`,
+      },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to fetch pending sources");
+    }
+    setPendingSources(data.sources || []);
+  } catch (err) {
+    console.error("Pending sources fetch error:", err.message);
+  }
+}
 
 
   // ✅ remove bookmark
@@ -203,6 +233,32 @@ function App() {
     }
     fetchSources();
   }, [selectedCategory]);
+
+
+  async function handleApproveSource(sourceId) {
+  try {
+    const savedToken = localStorage.getItem("token");
+    if (!savedToken) {
+      alert("You must be logged in.");
+      return;
+    }
+    const res = await fetch(`http://localhost:5001/api/admin/sources/${sourceId}/approve`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${savedToken}`,
+      },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to approve source");
+    }
+    alert(data.message || "Source approved successfully");
+    fetchPendingSources();
+    } catch (err) {
+    console.error("Approve source error:", err.message);
+    alert(err.message);
+    }
+    }
 
 
   return (
@@ -277,7 +333,6 @@ function App() {
                 }}
               >
                 <strong>{bookmark.title}</strong>
-
                 <div style={{ marginTop: "6px" }}>
                   <a href={bookmark.url} target="_blank" rel="noreferrer">
                     Visit Source
@@ -302,6 +357,54 @@ function App() {
           )}
         </div>
       )}
+    
+      {user?.role === "admin" && (
+    <div
+      style={{
+        background: "#fff",
+        padding: "16px",
+        marginBottom: "20px",
+        borderRadius: "8px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+      }}
+    >
+    <h2>Pending Sources</h2>
+    {pendingSources.length === 0 ? (
+      <p>No pending sources.</p>
+    ) : (
+      pendingSources.map((source) => (
+        <div
+          key={source.id}
+          style={{
+            padding: "12px 0",
+            borderBottom: "1px solid #eee",
+          }}
+        >
+          <strong>{source.title}</strong>
+          <p>{source.summary}</p>
+          <a href={source.url} target="_blank" rel="noreferrer">
+            Visit Source
+          </a>
+          <div style={{ marginTop: "8px" }}>
+            <button
+              onClick={() => handleApproveSource(source.id)}
+              style={{
+                padding: "8px 12px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                background: "green",
+                color: "white",
+                  }}
+                >
+                  Approve
+                </button>
+              </div>
+            </div>
+              ))
+        )}
+      </div>
+    )}
 
       <div style={{ marginBottom: "20px" }}>
         <label style={{ marginRight: "10px" }}>Select Category:</label>
