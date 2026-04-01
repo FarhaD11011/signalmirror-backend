@@ -209,8 +209,13 @@ function App() {
   }
 
 
-  // ✅ fetch sources
-  useEffect(() => {
+ 
+  // ✅ load sources when category changes
+    useEffect(() => {
+      fetchSources();
+    }, [selectedCategory]);
+
+    // ✅ fetch sources function
     async function fetchSources() {
       try {
         setLoading(true);
@@ -231,12 +236,10 @@ function App() {
         setLoading(false);
       }
     }
-    fetchSources();
-  }, [selectedCategory]);
-
-
-  async function handleApproveSource(sourceId) {
-  try {
+   
+    // ✅ approve pending source
+    async function handleApproveSource(sourceId) {
+    try {
     const savedToken = localStorage.getItem("token");
     if (!savedToken) {
       alert("You must be logged in.");
@@ -253,12 +256,13 @@ function App() {
       throw new Error(data.message || "Failed to approve source");
     }
     alert(data.message || "Source approved successfully");
-    fetchPendingSources();
+    await fetchPendingSources();
+    await fetchSources();
     } catch (err) {
     console.error("Approve source error:", err.message);
     alert(err.message);
     }
-    }
+  }
 
 
   return (

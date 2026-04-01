@@ -1484,4 +1484,96 @@ No pending sources...
 and earlier got a 404 for the pending fetch.
 So the next step is not frontend now.
 The next step is to add the pending list route to Express.
+
+<!-- Fast way in terminal -->
+From the backend folder, run:
+grep -R "pending" .
+grep -R "approve" .
+grep -R "admin" .
+
+<!-- relayflow=#  -->
+INSERT INTO sources (
+  url,
+  title,
+  summary,
+  image_url,
+  platform,
+  status,
+  category_id,
+  submitter_id
+)
+VALUES (
+  'https://example.com/pending-ocean-story',
+  'Pending Ocean Story',
+  'This source is waiting for admin approval.',
+  NULL,
+);3,ending',
+INSERT 0 1
+SELECT id, title, status FROM sources ORDER BY id DESC LIMIT 5;
+ id |        title        |  status  
+----+---------------------+----------
+  3 | Pending Ocean Story | pending
+  2 | Ocean News Example  | rejected
+  1 | Ocean News Example  | approved
+(3 rows)
+relayflow=# SELECT id, title, status
+FROM sources
+ORDER BY id;
+ id |        title        |  status  
+----+---------------------+----------
+  1 | Ocean News Example  | approved
+  2 | Ocean News Example  | rejected
+  3 | Pending Ocean Story | approved
+(3 rows)
 <!-- 🚀 🚀Phase 12.0.1 — Add pending sources admin route -->
+Not yet — it is still wrong.
+You accidentally put handleApproveSource() inside the useEffect block.
+That is a scope problem again.
+What is wrong in your current version
+You currently have this shape:
+That means both functions are living inside the effect, which is not what you want.
+Also, your useEffect no longer calls fetchSources();, and it looks unfinished.
+<!-- Correct structure -->
+You need three separate pieces:
+1. a normal fetchSources() function
+2. a useEffect(() => { fetchSources(); }, [selectedCategory])
+3. a normal handleApproveSource() function
+⸻
+Paste this exact replacement
+Replace your current broken section with this:
+The key rule
+Do not put handleApproveSource() inside useEffect.
+And do not put fetchSources() only inside useEffect if you want to call it elsewhere.
+What the structure should look like in your component
+Inside function App() { ... }, it should be like this order:
+<!-- After fixing -->
+Reset source 3 back to pending again if needed:
+<!-- relayflow=# : -->
+UPDATE sources
+SET status = 'pending'
+WHERE id = 3;
+Then test:
+	•	login as Admin2
+	•	see Pending Ocean Story
+	•	click Approve
+Expected:
+	•	disappears from Pending Sources
+	•	appears in public feed
+Perfect — now the full approval flow works.
+What your result confirms:
+	•	admin can see pending source
+	•	clicking Approve succeeds
+	•	source disappears from Pending Sources
+	•	source appears in the public approved feed
+	•	public feed refresh works immediately
+That means Phase 12.0 is fully complete.
+Your RelayFlow moderation loop now works end to end:
+	•	source exists as pending
+	•	admin sees it
+	•	admin approves it
+	•	it leaves pending queue
+	•	it becomes public
+That is a core feature.
+<!-- Commit this now -->
+git add .
+git commit -m "Refresh pending and public feeds after source approval"
