@@ -265,6 +265,33 @@ function App() {
   }
 
 
+  async function handleRejectSource(sourceId) {
+  try {
+    const savedToken = localStorage.getItem("token");
+    if (!savedToken) {
+      alert("You must be logged in.");
+      return;
+    }
+    const res = await fetch(`http://localhost:5001/api/admin/reject/${sourceId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${savedToken}`,
+      },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to reject source");
+    }
+    alert(data.message || "Source rejected successfully");
+    await fetchPendingSources();
+    await fetchSources();
+  } catch (err) {
+    console.error("Reject source error:", err.message);
+    alert(err.message);
+  }
+}
+
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>RelayFlow</h1>
@@ -389,26 +416,39 @@ function App() {
           <a href={source.url} target="_blank" rel="noreferrer">
             Visit Source
           </a>
-          <div style={{ marginTop: "8px" }}>
-            <button
-              onClick={() => handleApproveSource(source.id)}
-              style={{
-                padding: "8px 12px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                background: "green",
-                color: "white",
+          <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
+                <button
+                  onClick={() => handleApproveSource(source.id)}
+                  style={{
+                    padding: "8px 12px",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    background: "green",
+                    color: "white",
                   }}
                 >
                   Approve
                 </button>
+                <button
+                  onClick={() => handleRejectSource(source.id)}
+                  style={{
+                    padding: "8px 12px",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    background: "#dc3545",
+                    color: "white",
+                  }}
+                >
+                  Reject
+                </button>
               </div>
-            </div>
-              ))
-        )}
-      </div>
-    )}
+                          </div>
+                            ))
+                      )}
+                    </div>
+                  )}
 
       <div style={{ marginBottom: "20px" }}>
         <label style={{ marginRight: "10px" }}>Select Category:</label>

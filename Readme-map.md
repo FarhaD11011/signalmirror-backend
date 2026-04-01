@@ -1577,3 +1577,12 @@ That is a core feature.
 <!-- Commit this now -->
 git add .
 git commit -m "Refresh pending and public feeds after source approval"
+<!-- 🚀 Phase 12.1 — Add Reject Button to Admin Pending UI -->
+Goal
+Right now admin can approve pending sources.
+Now we add the other moderation action:
+	•	reject pending source
+	•	remove it from pending queue
+	•	keep it out of public feed
+This completes the moderation pair.
+<!-- Step 1 — Add handleRejectSource() -->
