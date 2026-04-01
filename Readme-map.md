@@ -1398,3 +1398,72 @@ if (data.user.is_admin) {
 <!-- Step 4 — Restore pending sources on refresh for admin -->
 Inside your auth restore useEffect, after:
 fetchBookmarks();
+add:
+<!-- Step 5 — Clear admin pending state on logout -->
+Update handleLogout to also clear pending sources:
+<!-- Step 6 — Add handleApproveSource() -->
+Inside App.jsx, add:
+async function handleApproveSource(sourceId)
+<!-- Step 7 — Add Admin Pending Sources section -->
+Add this block below My Bookmarks and above Select Category:
+{user?.is_admin && (
+<!-- Step 8 — Test it -->
+Log in as your admin user.
+Expected:
+	•	a new section appears:
+	•	Pending Sources
+
+<!-- Your frontend user object is: -->
+{
+  id: 4,
+  username: "admin2",
+  email: "admin2@example.com",
+  role: "admin"
+}
+o the admin check is not:
+	•	user.is_admin
+	•	user.admin
+It is:
+	•	user.role === "admin"
+That is why the admin panel never showed.
+1. In handleLogin
+replace:
+if (data.user.is_admin || data.user.admin) {
+  fetchPendingSources();
+}
+with:
+if (data.user.role === "admin") {
+  fetchPendingSources();
+}
+2. In restore-auth useEffect
+replace with:
+if (parsedUser.role === "admin") {
+  fetchPendingSources();
+}
+3. In the JSX where you render the admin section
+replace with:
+{user?.role === "admin" && (
+
+Why this happened
+Your backend is sending a role-based auth model, not a boolean admin flag.
+That means:
+	•	regular user might be "user"
+	•	admin user is "admin"
+This is actually a good pattern. It is more scalable than a simple boolean because later you could have roles like:
+	•	user
+	•	moderator
+	•	admin
+So for RelayFlow, role is the correct field to use.
+What changed:
+	•	admin login is recognized correctly through role: "admin"
+	•	Pending Sources section now renders
+	•	current result is:
+	•	No pending sources.
+So Phase 12.0 frontend is successful.
+
+
+<!-- Step 9 — Commit -->
+git add .
+git commit -m "Add admin pending sources approval UI"
+
+<!-- 🚀 Phase 12.0.1 — Add pending sources admin route -->

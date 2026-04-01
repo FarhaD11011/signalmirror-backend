@@ -242,10 +242,10 @@ function App() {
       alert("You must be logged in.");
       return;
     }
-    const res = await fetch(`http://localhost:5001/api/admin/sources/${sourceId}/approve`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${savedToken}`,
+    const res = await fetch(`http://localhost:5001/api/admin/approve/${sourceId}`, {
+          method: "PATCH",
+          headers: {
+          Authorization: `Bearer ${savedToken}`,
       },
     });
     const data = await res.json();
