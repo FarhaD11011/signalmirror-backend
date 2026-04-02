@@ -12,12 +12,6 @@ import PageContainer from "./components/PageContainer";
 import AppHeader from "./components/AppHeader";
 
 
-
-
-
-
-
-
 function App() {
   // ✅ auth state
   const [user, setUser] = useState(null);
@@ -49,6 +43,7 @@ function App() {
   // ✅ global action messages (replace alert)
   const [successMessage, setSuccessMessage] = useState("");
   const [actionError, setActionError] = useState("");
+
 
   // ✅ fetch bookmarks
   async function fetchBookmarks() {
@@ -140,6 +135,16 @@ function App() {
     }
     fetchCategories();
   }, []);
+
+  // ✅ 	success/error message appears
+  useEffect(() => {
+  if (!successMessage && !actionError) return;
+  const timer = setTimeout(() => {
+    setSuccessMessage("");
+    setActionError("");
+  }, 2500);
+  return () => clearTimeout(timer);
+}, [successMessage, actionError]);
 
   // ✅ restore login on page refresh
   useEffect(() => {
@@ -317,6 +322,38 @@ function App() {
     }
   }
 
+  // ✅ vote on a source
+  async function handleVote(sourceId, voteType) {
+    setSuccessMessage("");
+    setActionError("");
+    try {
+      const savedToken = localStorage.getItem("token");
+      if (!savedToken) {
+        setActionError("You must be logged in to vote.");
+        return;
+      }
+      const res = await fetch("http://localhost:5001/api/votes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${savedToken}`,
+        },
+        body: JSON.stringify({
+          source_id: sourceId,
+          vote_type: voteType,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to save vote");
+      }
+      setSuccessMessage(data.message || "Vote saved successfully");
+      await fetchSources();
+    } catch (err) {
+      setActionError(err.message);
+    }
+  }
+
   // ✅ approve pending source
   async function handleApproveSource(sourceId) {
     setSuccessMessage("");
@@ -446,6 +483,10 @@ function App() {
             sources={sources}
             isBookmarked={isBookmarked}
             handleBookmark={handleBookmark}
+            handleVote={handleVote}
+            user={user}
+            setActionError={setActionError}
+            setSuccessMessage={setSuccessMessage}
         />
     </PageContainer>
   );

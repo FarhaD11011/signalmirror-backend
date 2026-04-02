@@ -1,6 +1,16 @@
 import SourceList from "./SourceList";
 
-function FeedSection({ loading, error, sources, isBookmarked, handleBookmark }) {
+function FeedSection({
+  loading,
+  error,
+  sources,
+  isBookmarked,
+  handleBookmark,
+  handleVote,
+  user,
+  setActionError,
+  setSuccessMessage,
+}) {
   if (loading) {
     return <h2>Loading...</h2>;
   }
@@ -14,6 +24,10 @@ function FeedSection({ loading, error, sources, isBookmarked, handleBookmark }) 
       sources={sources}
       isBookmarked={isBookmarked}
       handleBookmark={handleBookmark}
+      handleVote={handleVote}
+      user={user}
+      setActionError={setActionError}
+      setSuccessMessage={setSuccessMessage}
     />
   );
 }

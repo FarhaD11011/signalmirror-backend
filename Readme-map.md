@@ -1852,3 +1852,59 @@ src/components/AppHeader.jsx
 — Import it into App.js
 — Replace the old title in App.js
 Step 5 — Test
+🚀 What you’re doing is correct
+Saving, logging out, and logging back in after each extraction is a strong test because it checks:
+	•	app still compiles
+	•	auth flow still works
+	•	persisted login state still works
+	•	extracted components did not silently break the app\
+That is better than only checking whether the page “looks okay.”
+<!-- Important Decision: Stop Tiny Extractions Here -->
+At this point, I do not recommend continuing with more tiny UI extractions just for the sake of it.
+Why?
+Because now App.js is probably close to the right role:
+	•	state owner
+	•	data fetch coordinator
+	•	action handler hub
+	•	page assembler
+That is what App.js should do.
+If we keep extracting extremely tiny pieces, we risk:
+	•	too many files
+	•	unnecessary indirection
+	•	harder navigation
+	•	less practical benefit
+So this is a good stopping point for micro-extractions.
+<!-- — Commit this refactor batch -->
+git add .
+git commit -m "Add source submission UI and refactor App into smaller components"
+git log --oneline -5 
+<!-- 🚀🚀 Phase 14.0 — Restore Voting UI -->
+✅ What we found
+Your backend vote route is fine.
+You have:
+	•	POST /api/votes ✅
+	•	auth protection ✅
+	•	validation for source_id ✅
+	•	validation for vote_type ✅
+	•	upsert behavior ✅
+-But there are no vote buttons and no handleVote() prop.
+So the fix is fully clear:
+	•	add handleVote() in App.js
+	•	pass it down to FeedSection
+	•	pass it down to SourceList
+	•	add Upvote / Downvote buttons
+	•	refresh sources after vote
+- Step 1 — Add handleVote() to App.js
+Put this function near your other handlers:
+- Step 2 — Update FeedSection.jsx
+Right now FeedSection.jsx probably accepts:
+	•	loading
+	•	error
+	•	sources
+	•	isBookmarked
+	•	handleBookmark
+We need to add handleVote.
+Update it to this:
+- Step 3 — Update App.js where FeedSection is rendered
+- Step 4 — Update SourceList.jsx
+- Step 5 — Test
