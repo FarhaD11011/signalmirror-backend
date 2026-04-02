@@ -6,7 +6,10 @@ import SourceList from "./components/SourceList";
 import SourceForm from "./components/SourceForm";
 import CategoryFilter from "./components/CategoryFilter";
 import MessageBanner from "./components/MessageBanner";
-
+import UserStatusBar from "./components/UserStatusBar";
+import FeedSection from "./components/FeedSection";
+import PageContainer from "./components/PageContainer";
+import AppHeader from "./components/AppHeader";
 
 
 
@@ -380,33 +383,21 @@ function App() {
 
 // ✅ Main-return
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>RelayFlow</h1>
-
+    <PageContainer>
+      <AppHeader />
       <MessageBanner type="success" message={successMessage} />
       <MessageBanner type="error" message={actionError} />
       
       {!user ? (
         <LoginForm
-          email={email}
-          password={password}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          handleLogin={handleLogin}
-        />
-      ) : (
-        <div style={{ marginBottom: "20px" }}>
-          Logged in as{" "}
-          <strong>
-            {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
-          </strong>
-          <button
-            onClick={handleLogout}
-            style={{ marginLeft: "12px", padding: "8px 12px" }}
-          >
-            Logout
-          </button>
-        </div>
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            handleLogin={handleLogin}
+          />
+        ) : (
+          <UserStatusBar user={user} handleLogout={handleLogout} />
       )}
 
       {user && (
@@ -430,8 +421,8 @@ function App() {
 
       {user && (
           <BookmarksPanel
-          bookmarks={bookmarks}
-          handleRemoveBookmark={handleRemoveBookmark}
+            bookmarks={bookmarks}
+            handleRemoveBookmark={handleRemoveBookmark}
       />
       )}
 
@@ -444,23 +435,19 @@ function App() {
       )}
 
           <CategoryFilter
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            categories={categories}
         />
 
-      {loading ? (
-          <h2>Loading...</h2>
-          ) : error ? (
-            <h2>Error: {error}</h2>
-          ) : (
-            <SourceList
-              sources={sources}
-              isBookmarked={isBookmarked}
-              handleBookmark={handleBookmark}
-            />
-      )}
-    </div>
+          <FeedSection
+            loading={loading}
+            error={error}
+            sources={sources}
+            isBookmarked={isBookmarked}
+            handleBookmark={handleBookmark}
+        />
+    </PageContainer>
   );
 }
 

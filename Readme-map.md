@@ -1796,3 +1796,59 @@ What this proves
 — Import it into App.js
 — Replace the old banner JSX in App.js
 -Step 5 — Test
+<!-- commit i: -->
+git add .
+git commit -m "Add source submission UI and extract category filter and message banner components"
+<!-- 🚀 Phase 13.5 — Extract UserStatusBar.jsx -->
+— Create UserStatusBar.jsx
+src/components/UserStatusBar.jsx
+— Put this code into UserStatusBar.jsx
+— Import it into App.js
+— Replace the old logged-in JSX in App.js
+ Step 5 — Test
+ Phase 13.5 — Extract UserStatusBar.jsx
+✅ Complete
+That means:
+	•	login view still works ✅
+	•	logged-in bar still renders ✅
+	•	logout still works ✅
+	•	extraction is stable ✅
+<!-- 🚀 Phase 13.6 — Extract FeedSection.jsx -->
+🎯 Goal
+Move the public feed wrapper logic out of App.js:
+	•	loading state
+	•	error state
+	•	source list render
+— Create FeedSection.jsx
+src/components/FeedSection.jsx
+— Put this code into FeedSection.jsx
+— Import it into App.js
+— Replace the old feed wrapper in App.js
+Step 5 — Test
+Phase 13.6 — Extract FeedSection.jsx
+✅ Complete
+That means:
+	•	feed wrapper extraction worked ✅
+	•	loading/error/source rendering still works ✅
+	•	app behavior stayed stable ✅
+App.js should now be noticeably lighter.
+<!-- 🚀 Phase 13.7 — Extract PageContainer.jsx -->
+— Create PageContainer.jsx
+src/components/PageContainer.jsx
+— Put this code into PageContainer.jsx
+— Import it into App.js
+— Replace the outer wrapper in App.js
+Step 5 — Test
+Phase 13.7 — Extract PageContainer.jsx
+✅ Complete
+That means:
+	•	outer wrapper extraction worked ✅
+	•	layout stayed the same ✅
+	•	app still behaves correctly ✅
+<!-- 🚀 Phase 13.8 — Extract AppHeader.jsx -->
+— Create AppHeader.jsx
+src/components/AppHeader.jsx
+— Put this code into AppHeader.jsx
+— Import it into App.js
+— Replace the old title in App.js
+Step 5 — Test
