@@ -48,7 +48,7 @@ function SourceList({ sources, isBookmarked, handleBookmark }) {
               <strong>Platform:</strong> {source.platform || "Unknown"}
             </div>
 
-            <div style={{ marginTop: "6px" }}>
+            <div style={{ marginTop: "14px" }}>
               👍 {source.upvotes} | 👎 {source.downvotes} | Score:{" "}
               {source.score}
             </div>

@@ -3,6 +3,10 @@ import LoginForm from "./components/LoginForm";
 import BookmarksPanel from "./components/BookmarksPanel";
 import PendingSourcesPanel from "./components/PendingSourcesPanel";
 import SourceList from "./components/SourceList";
+import SourceForm from "./components/SourceForm";
+import CategoryFilter from "./components/CategoryFilter";
+import MessageBanner from "./components/MessageBanner";
+
 
 
 
@@ -30,6 +34,14 @@ function App() {
   // ✅ ui state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // ✅ source submission form state
+  const [sourceTitle, setSourceTitle] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [sourceSummary, setSourceSummary] = useState("");
+  const [sourceImageUrl, setSourceImageUrl] = useState("");
+  const [sourcePlatform, setSourcePlatform] = useState("");
+  const [sourceCategoryId, setSourceCategoryId] = useState("");
 
   // ✅ global action messages (replace alert)
   const [successMessage, setSuccessMessage] = useState("");
@@ -184,6 +196,50 @@ function App() {
     }
   }
 
+  // ✅ submit new source
+  async function handleSubmitSource(e) {
+    e.preventDefault();
+    setSuccessMessage("");
+    setActionError("");
+    if (!user) {
+      setActionError("You must be logged in to submit a source.");
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:5001/api/sources", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: sourceTitle,
+          url: sourceUrl,
+          summary: sourceSummary || null,
+          image_url: sourceImageUrl || null,
+          platform: sourcePlatform || null,
+          category_id: sourceCategoryId ? Number(sourceCategoryId) : null,
+          submitter_id: user.id,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to submit source");
+      }
+      setSuccessMessage(data.message || "Source submitted successfully");
+      setSourceTitle("");
+      setSourceUrl("");
+      setSourceSummary("");
+      setSourceImageUrl("");
+      setSourcePlatform("");
+      setSourceCategoryId("");
+      if (user.role === "admin") {
+        await fetchPendingSources();
+      }
+    } catch (err) {
+      setActionError(err.message);
+    }
+  }
+
   // ✅ logout handler
   function handleLogout() {
     setUser(null);
@@ -322,41 +378,14 @@ function App() {
     }
   }
 
-
+// ✅ Main-return
   return (
     <div style={{ padding: "20px" }}>
       <h1>RelayFlow</h1>
 
-      {successMessage && (
-        <div
-          style={{
-            background: "#d4edda",
-            color: "#155724",
-            padding: "10px 12px",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            border: "1px solid #c3e6cb",
-          }}
-        >
-          {successMessage}
-        </div>
-      )}
-
-      {actionError && (
-        <div
-          style={{
-            background: "#f8d7da",
-            color: "#721c24",
-            padding: "10px 12px",
-            borderRadius: "6px",
-            marginBottom: "16px",
-            border: "1px solid #f5c6cb",
-          }}
-        >
-          {actionError}
-        </div>
-      )}
-
+      <MessageBanner type="success" message={successMessage} />
+      <MessageBanner type="error" message={actionError} />
+      
       {!user ? (
         <LoginForm
           email={email}
@@ -381,6 +410,25 @@ function App() {
       )}
 
       {user && (
+        <SourceForm
+          sourceTitle={sourceTitle}
+          setSourceTitle={setSourceTitle}
+          sourceUrl={sourceUrl}
+          setSourceUrl={setSourceUrl}
+          sourceSummary={sourceSummary}
+          setSourceSummary={setSourceSummary}
+          sourceImageUrl={sourceImageUrl}
+          setSourceImageUrl={setSourceImageUrl}
+          sourcePlatform={sourcePlatform}
+          setSourcePlatform={setSourcePlatform}
+          sourceCategoryId={sourceCategoryId}
+          setSourceCategoryId={setSourceCategoryId}
+          categories={categories}
+          handleSubmitSource={handleSubmitSource}
+        />
+      )}
+
+      {user && (
           <BookmarksPanel
           bookmarks={bookmarks}
           handleRemoveBookmark={handleRemoveBookmark}
@@ -395,22 +443,11 @@ function App() {
   />
       )}
 
-      <div style={{ marginBottom: "20px" }}>
-        <label style={{ marginRight: "10px" }}>Select Category:</label>
-
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ padding: "8px" }}
-        >
-          <option value="">All</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-      </div>
+          <CategoryFilter
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          categories={categories}
+        />
 
       {loading ? (
           <h2>Loading...</h2>

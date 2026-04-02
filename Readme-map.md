@@ -1750,3 +1750,49 @@ This will remove the biggest JSX block from App.js.
 For this step:
 	•	UI moves out
 	•	logic stays in App.js
+<!-- Step 5 — Commit this refactor -->
+git add .
+git commit -m "Split App into LoginForm BookmarksPanel PendingSourcesPanel and SourceList components"
+<!-- 🚀 Phase 13.2 — Add Source Submission Form UI -->
+<!-- Step 1 — Create SourceForm.jsx -->
+🎯 Goal
+-Create a separate component for the source submission form.
+For this first step:
+	•	component only handles the UI
+	•	state and submit logic will stay in App.js for now
+That keeps the change safe and incremental.
+-Put this code inside SourceForm.jsx
+— Import it into App.js
+— Add form state in App.js
+— Add handleSubmitSource() in App.js
+— Render the form in App.js
+— What to test
+<!-- 🚀 Phase 13.2 — Status Right Now -->
+Completed
+	•	✅ Source form component created
+	•	✅ Form state added
+	•	✅ handleSubmitSource() added
+	•	✅ Backend connected
+	•	✅ Form clears after success
+	•	✅ Admin pending refreshes
+	•	✅ Approved source appears in feed
+<!-- 🚀 Phase 13.3 — Extract CategoryFilter.jsx -->
+— Create CategoryFilter.jsx
+frontend/src/components/CategoryFilter.jsx
+— Put this code into CategoryFilter.jsx
+— Import it into App.js
+— Replace the old category filter JSX in App.js
+-Step 5 — Test
+Phase 13.3 — Extract CategoryFilter.jsx
+✅ Complete
+What this proves
+	•	app still renders ✅
+	•	category filter still shows ✅
+	•	no compile error ✅
+	•	extraction worked ✅
+<!-- 🚀 Phase 13.4 — Extract MessageBanner.jsx -->
+— Create MessageBanner.jsx
+— Put this code into MessageBanner.jsx
+— Import it into App.js
+— Replace the old banner JSX in App.js
+-Step 5 — Test
