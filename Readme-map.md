@@ -1641,3 +1641,112 @@ our current route already does these well:
 	•	returns clean success response
 So the only missing piece is:
 👉 check whether this URL already exists before insert
+<!-- ✅ Step 2 — Add duplicate URL check before INSERT -->
+Add a query before the INSERT in sourcesRoutes.js
+<!-- ✅ Step 3 — What this new code does -->
+A. Cleans the URL
+<!-- 🚀 Phase 13.0 — Prevent Duplicate Source Submission -->
+Step 1 — Review submit route ✅
+Step 2 — Add duplicate URL check ✅
+Step 3 — Return 409 on duplicate ✅
+Step 4 — Test in Postman ✅
+Step 5 — Commit
+✅ Final Answer
+Because from a product perspective, both situations are the same:
+	•	user tried to submit a URL that already exists
+We do not care whether:
+	•	it had spaces
+	•	it was exact
+	•	it was copy-pasted differently
+👉 The outcome is identical → duplicate
+Do we need to know which case caused the duplicate?
+👉 No.
+Because:
+	•	both cases represent the same logical situation
+	•	user action → duplicate submission
+	•	system response → block + clear message
+<!-- 🚀 Phase 13.1 — Show Duplicate Submission Error in Frontend -->
+First important thing:
+Right now, your App.js does not contain a source submission form yet.
+It has:
+	•	login
+	•	logout
+	•	fetch sources
+	•	fetch categories
+	•	bookmarks
+	•	pending admin moderation
+	•	approve/reject
+But it does not yet have:
+	•	title state for new source
+	•	url state for new source
+	•	summary state for new source
+	•	handleSubmitSource()
+	•	fetch("http://localhost:5001/api/sources", { method: "POST" ... })
+So before we can show a duplicate error in the frontend, we first need the frontend to actually have a submit source UI.
+That means the real next step is not “catch 409” yet.
+The real next step is:
+Add Source Submission Form UI
+🎯 Goal
+Let a logged-in user submit a new source from the frontend.
+Then, after that, we can enhance it to show:
+	•	duplicate URL error
+	•	success message
+	•	validation feedback
+<!-- ⚠️ Things that need fixing or cleanup -->
+2. fetchBookmarks() and fetchPendingSources() are used before they appear
+-That is a normal React pattern.
+So yes:
+	•	defining a helper function inside useEffect is fine
+	•	especially when only that effect needs it
+No problem there.
+-fetchSources() is outside useEffect
+That is also good.
+Because you use it in multiple places:
+	•	category effect
+	•	approve refresh
+	•	reject refresh
+So it makes sense to keep it outside.
+-alert() works, but later should be replaced
+Right now you use alerts for:
+	•	login error
+	•	bookmark success
+	•	approve success
+	•	reject success
+That is okay for now, but later we should move to proper UI messages.
+Not urgent yet.
+<!-- 🚀 Split order -->
+We should go in this order:
+Step 1 — Extract LoginForm.jsx
+Smallest and safest first.
+Step 2 — Extract BookmarksPanel.jsx
+Step 3 — Extract PendingSourcesPanel.jsx
+Step 4 — Extract SourceList.jsx
+Then App.js becomes much cleaner.
+<!-- Step 1 — Extract LoginForm.jsx -->
+🎯 Goal
+Move this block out of App.js:
+	•	login form JSX
+	•	email input
+	•	password input
+	•	login button
+Keep the logic in App.js for now.
+So LoginForm.jsx will be a presentational component only.
+That is the safest first split.
+<!-- Step 2 — Extract BookmarksPanel.jsx -->
+🎯 Goal
+Move the My Bookmarks UI block out of App.js.
+For this step, we only move the JSX.
+The logic stays in App.js.
+<!-- Step 3 — Extract PendingSourcesPanel.jsx -->
+🎯 Goal
+Move the Pending Sources admin UI block out of App.js.
+Again, for this step:
+	•	JSX moves out
+	•	logic stays in App.js
+<!-- Step 4 — Extract SourceList.jsx -->
+🎯 Goal
+Move the public feed rendering out of App.js.
+This will remove the biggest JSX block from App.js.
+For this step:
+	•	UI moves out
+	•	logic stays in App.js
