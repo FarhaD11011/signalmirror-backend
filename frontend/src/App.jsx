@@ -92,26 +92,35 @@ function App() {
   }
 
   // ✅ fetch public sources
-  async function fetchSources() {
-    try {
+async function fetchSources(showLoader = true) {
+  try {
+    if (showLoader) {
       setLoading(true);
-      setError("");
-      let url = "http://localhost:5001/api/sources";
-      if (selectedCategory) {
-        url += `?category_id=${selectedCategory}`;
-      }
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch sources");
-      }
-      setSources(data.sources || []);
-    } catch (err) {
-      setError(err.message || "Something went wrong");
-    } finally {
+    }
+    setError("");
+    let url = "http://localhost:5001/api/sources";
+    if (selectedCategory) {
+      url += `?category_id=${selectedCategory}`;
+    }
+    const savedToken = localStorage.getItem("token");
+    const res = await fetch(url, {
+      headers: savedToken
+        ? { Authorization: `Bearer ${savedToken}` }
+        : {},
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to fetch sources");
+    }
+    setSources(data.sources || []);
+  } catch (err) {
+    setError(err.message || "Something went wrong");
+  } finally {
+    if (showLoader) {
       setLoading(false);
     }
   }
+}
 
   // ✅ helper: check whether a source is already bookmarked
   function isBookmarked(sourceId) {
@@ -165,6 +174,7 @@ function App() {
   useEffect(() => {
     fetchSources();
   }, [selectedCategory]);
+
 
   // ✅ login handler
   async function handleLogin(e) {
@@ -248,17 +258,17 @@ function App() {
     }
   }
 
-  // ✅ logout handler
-  function handleLogout() {
-    setUser(null);
-    setToken(null);
-    setBookmarks([]);
-    setPendingSources([]);
-    setSuccessMessage("");
-    setActionError("");
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }
+    // ✅ logout handler
+    function handleLogout() {
+      setUser(null);
+      setToken(null);
+      setBookmarks([]);
+      setPendingSources([]);
+      setSuccessMessage("");
+      setActionError("");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
 
   // ✅ add bookmark
   async function handleBookmark(sourceId) {
@@ -324,6 +334,8 @@ function App() {
 
   // ✅ vote on a source
   async function handleVote(sourceId, voteType) {
+    
+
     setSuccessMessage("");
     setActionError("");
     try {
@@ -348,7 +360,7 @@ function App() {
         throw new Error(data.message || "Failed to save vote");
       }
       setSuccessMessage(data.message || "Vote saved successfully");
-      await fetchSources();
+      await fetchSources(false);
     } catch (err) {
       setActionError(err.message);
     }

@@ -1908,3 +1908,143 @@ Update it to this:
 - Step 3 — Update App.js where FeedSection is rendered
 - Step 4 — Update SourceList.jsx
 - Step 5 — Test
+<!-- 🚀 Best next step -->
+This should be the next cleanup/polish phase:
+<!-- 🚀 Phase 14.1 — Improve Logged-Out Action UX -->
+Step 1 — Pass user into SourceList
+Step 2 — Disable or hide Bookmark/Vote when logged out
+Step 3 — Replace text vote buttons with 👍 / 👎 buttons
+Step 4 — Test logged-out vs logged-in behavior
+Step 5 — Commit
+<!-- 🚀 My recommendation -->
+Do this next:
+	•	keep feed public
+	•	disable action buttons when logged out
+	•	replace Upvote / Downvote with thumbs
+— Update SourceList.jsx
+— Update FeedSection.jsx
+— Update App.js
+— What this changes
+— Test it.
+<!-- 🚀 Commit this -->
+git add .
+git commit -m "Restore voting functionality and redesign vote UI with thumbs and improved UX"
+
+🚀 Option A — Highlight user vote (recommended next)
+🚀 Option B — Add search feature
+🚀 Option C — Sorting / ranking
+<!-- 🚀 Phase 14.5 — Highlight User Vote (Active State) -->
+🎯 Goal
+When a logged-in user votes:
+	•	the UI should show which vote they chose
+	•	👍 should look active if user upvoted
+	•	👎 should look active if user downvoted
+	•	this should persist after refresh
+Right now you only show total counts.
+You do not yet know the current user’s vote per source in the frontend.
+<!-- 🚀 Phase 14.5 — Highlight User Vote (Active State) -->
+— Create optionalAuthMiddleware.js
+🎯 Goal
+	•	If token exists → decode user
+	•	If no token → continue as guest (no error)
+
+<!-- 🚀 What you just achieved (important) -->
+You now have:
+✅ Optimistic-style interaction (almost)
+	•	user clicks vote
+	•	UI updates without page reset feeling
+	•	no layout collapse
+✅ Controlled loading strategy
+	•	full loader → only when needed
+	•	silent refresh → for small actions
+✅ Stable UX
+	•	no scroll jump
+	•	no flicker
+	•	smooth interaction
+This is mid-to-senior level frontend thinking.
+Yes — now the real cause is clear.
+This is not a button problem anymore.
+The page jumps because when you vote, handleVote() calls:
+await fetchSources();
+and inside fetchSources() you do:
+setLoading(true);
+So while voting:
+	1.	the whole feed switches to Loading…
+	2.	the long page content disappears
+	3.	browser scroll position gets pulled upward
+	4.	sources come back
+	5.	you stay near the top
+That is why it jumps.
+⸻
+🚀 Phase 14.5.3 — Fix Vote Jump by Silent Refresh
+🎯 Goal
+When voting:
+	•	refresh source data
+	•	without showing global loading state
+	•	keep scroll position stable
+⸻
+🟩 Step 1 — Update fetchSources() in App.jsx
+📁 File
+frontend/src/App.jsx
+Find this:
+async function fetchSources() {
+Replace it with this:
+⸻
+🟩 Step 2 — Change vote refresh to silent refresh
+📁 File
+frontend/src/App.jsx
+Inside handleVote(), find this line:
+await fetchSources();
+Replace it with:
+await fetchSources(false);
+⸻
+✅ What this changes
+Normal page load / category change
+Still uses loader:
+fetchSources()
+Voting
+Refreshes data silently:
+fetchSources(false)
+So:
+	•	source counts update
+	•	active vote updates
+	•	page does not collapse to Loading…
+	•	scroll position stays stable
+⸻
+🚀 Why this is the real fix
+Your current flow during vote is:
+	•	save vote
+	•	clear feed with loading
+	•	reload feed
+That causes layout collapse.
+The silent refresh keeps the feed rendered while new data comes in.
+That is the correct UX.
+⸻
+🟩 Step 3 — Test
+Go low on the page and click vote.
+Expected:
+	•	no jump to top
+	•	vote updates
+	•	success message still shows
+	•	feed stays visible during refresh
+⸻
+🚀 Important note
+This same improvement can also help for:
+	•	approve/reject refreshes later
+	•	bookmark refreshes later
+	•	other small actions that should not flash Loading…
+But for now, do it for voting first.
+⸻
+Your exact change summary
+In frontend/src/App.jsx
+Change:
+async function fetchSources()
+to:
+async function fetchSources(showLoader = true)
+And change:
+await fetchSources();
+inside handleVote
+to:
+await fetchSources(false);
+⸻
+After you test that, tell me whether the jumping is gone.

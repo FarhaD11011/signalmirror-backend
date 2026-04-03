@@ -96,6 +96,7 @@ function SourceList({
                     {/* 👍 */}
                     <div style={{ textAlign: "center" }}>
                       <button
+                        type="button"
                         onClick={() =>
                           user
                             ? handleVote(source.id, "up")
@@ -105,15 +106,22 @@ function SourceList({
                           border: "none",
                           borderRadius: "10px",
                           cursor: "pointer",
-                          background: "green",
+                          background: source.user_vote === "up" ? "#0b5d1e" : "green",
+                          
                           color: "white",
                           fontSize: "18px",
                           width: "34px",
                           height: "30px",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: 
+                          source.user_vote === "up"
+                              ? "0 0 0 2px rgba(11, 93, 30, 0.35), 0 2px 6px rgba(0,0,0,0.12)"
+                              : "0 2px 6px rgba(0,0,0,0.12)",
                         }}
                       >
-                        👍
+                      <span style={{ fontSize: "16px", lineHeight: 1 }}>👍</span>
                       </button>
                       
                       <div style={{ fontSize: "14px", marginTop: "4px" }}>
@@ -124,6 +132,7 @@ function SourceList({
                     {/* 👎 */}
                     <div style={{ textAlign: "center" }}>
                       <button
+                         type="button"
                         onClick={() =>
                           user
                             ? handleVote(source.id, "down")
@@ -133,15 +142,22 @@ function SourceList({
                           border: "none",
                           borderRadius: "10px",
                           cursor: "pointer",
-                          background: "#dc3545",
+                          background: source.user_vote === "down" ? "#a71d2a" : "#dc3545",
+                          
                           color: "white",
-                          fontSize: "18px",
+                          fontSize: "18px", // 👈 slightly smaller
                           width: "34px",
                           height: "30px",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: 
+                          source.user_vote === "down"
+                              ? "0 0 0 2px rgba(167, 29, 42, 0.35), 0 2px 6px rgba(0,0,0,0.12)"
+                              : "0 2px 6px rgba(0,0,0,0.12)",
                         }}
                       >
-                        👎
+                        <span style={{ fontSize: "16px", lineHeight: 1 }}>👎</span>
                       </button>
                       <div style={{ fontSize: "14px", marginTop: "4px" }}>
                         {source.downvotes}

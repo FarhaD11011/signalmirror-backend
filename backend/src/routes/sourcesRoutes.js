@@ -1,51 +1,68 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
+const optionalAuthMiddleware = require("../middleware/optionalAuthMiddleware");
 
 
 // ✅ GET /api/sources
 // public feed: only approved sources, optionally filtered by category
-router.get("/", async (req, res) => {
+router.get("/", optionalAuthMiddleware, async (req, res) => {
   try {
     const { category_id } = req.query;
-      let query = `
-    SELECT
-      sources.*,
-      COALESCE(SUM(CASE WHEN votes.vote_type = 'up' THEN 1 ELSE 0 END), 0) AS upvotes,
-      COALESCE(SUM(CASE WHEN votes.vote_type = 'down' THEN 1 ELSE 0 END), 0) AS downvotes,
-      COALESCE(SUM(
-        CASE
-          WHEN votes.vote_type = 'up' THEN 1
-          WHEN votes.vote_type = 'down' THEN -1
-          ELSE 0
-        END
-      ), 0) AS score
-    FROM sources
-    LEFT JOIN votes ON sources.id = votes.source_id
-    WHERE sources.status = 'approved'
-  `;
-    const values = [];
-    if (category_id !== undefined) {
+    const userId = req.user?.id || null;
+
+    const values = [userId];
+    let query = `
+      SELECT
+        sources.*,
+        COALESCE(SUM(CASE WHEN votes.vote_type = 'up' THEN 1 ELSE 0 END), 0) AS upvotes,
+        COALESCE(SUM(CASE WHEN votes.vote_type = 'down' THEN 1 ELSE 0 END), 0) AS downvotes,
+        COALESCE(SUM(
+          CASE
+            WHEN votes.vote_type = 'up' THEN 1
+            WHEN votes.vote_type = 'down' THEN -1
+            ELSE 0
+          END
+        ), 0) AS score,
+        MAX(
+          CASE
+            WHEN votes.user_id = $1 THEN votes.vote_type
+            ELSE NULL
+          END
+        ) AS user_vote
+      FROM sources
+      LEFT JOIN votes ON sources.id = votes.source_id
+      WHERE sources.status = 'approved'
+    `;
+
+    if (category_id !== undefined && category_id !== "") {
       const parsedCategoryId = Number(category_id);
+
       if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
         return res.status(400).json({
           message: "category_id must be a positive integer",
         });
       }
-      query += ` AND sources.category_id = $1`;
+
       values.push(parsedCategoryId);
+      query += ` AND sources.category_id = $2`;
     }
-    query += ` 
+
+    query += `
       GROUP BY sources.id
       ORDER BY sources.created_at DESC
     `;
+
     const result = await pool.query(query, values);
+
     const formattedSources = result.rows.map((source) => ({
       ...source,
       upvotes: Number(source.upvotes),
       downvotes: Number(source.downvotes),
       score: Number(source.score),
+      user_vote: source.user_vote || null,
     }));
+
     res.json({
       success: true,
       count: formattedSources.length,
