@@ -2048,3 +2048,126 @@ to:
 await fetchSources(false);
 ⸻
 After you test that, tell me whether the jumping is gone.
+<!-- commit it -->
+git add .
+git commit -m "Highlight active votes and prevent feed jump during voting"
+<!-- 🚀 Phase 15.0 — Add Search Feature (Frontend-Only) -->
+This means:
+	•	backend still sends the full current source list
+	•	React filters that list in the browser
+	•	search feels fast and easy to build
+Pros
+	•	simplest to implement
+	•	no backend changes
+	•	fast for small/medium lists
+	•	great for learning and MVP stage
+Cons
+	•	only searches what is already loaded
+	•	not scalable for huge datasets
+	•	user downloads all results even if they only need a few
+🚀 Full backend search
+This means:
+	•	user types search text
+	•	frontend sends it to backend, like:
+	•	backend filters in SQL
+	•	only matching results are returned
+Your Node/Express route would read a search query and use SQL like:
+Pros
+	•	scales much better
+	•	more realistic production design
+	•	backend/database does the searching
+	•	can support pagination and ranking later
+Cons
+	•	more code
+	•	more moving pieces
+	•	slightly harder to debug at first
+🟩 Step 1 — Add search state
+📁 File
+frontend/src/App.jsx
+Add this near your other state:
+const [searchTerm, setSearchTerm] = useState("");
+🟩 Step 2 — Create SearchBar.jsx
+📁 File
+frontend/src/components/SearchBar.jsx
+Create it with this code:
+🟩 Step 3 — Import and render SearchBar
+📁 File
+frontend/src/App.jsx
+Add import at the top:
+Render it below the category filter
+Add this directly under it:
+<SearchBar
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+/>
+🟩 Step 4 — Filter sources before rendering
+📁 File
+frontend/src/App.jsx
+Before the return, add this:
+const filteredSources = sources.filter((source) =>
+  source.title.toLowerCase().includes(searchTerm.toLowerCase())
+);
+🟩 Step 5 — Pass filteredSources into FeedSection
+📁 File
+frontend/src/App.jsx
+Change only this line:
+sources={sources}
+to: sources={filteredSources}
+🟩 Step 6 — Test
+<!-- 🚀 Commit this phase -->
+git add .
+git commit -m "Add frontend search feature with SearchBar and filtered sources"
+
+My recommended order from here
+
+<!-- 🚀🚀🚀🚀If I were guiding the project, I would go: -->
+🚀 Phase 15.1 — Improve Frontend Search
+	•	search title + summary
+	•	trim spaces
+	•	cleaner empty-state behavior
+🚀 Phase 16.0 — Backend Search
+	•	add search query param to /api/sources
+	•	filter in SQL with ILIKE
+	•	keep category filter working together with search
+	•	test combinations:
+	•	category only
+	•	search only
+	•	category + search
+🚀 Phase 17.0 — Sorting / Ranking
+	•	newest
+	•	highest score
+	•	most upvoted
+🚀 Phase 18.0 — Better Source Cards UI
+	•	better spacing
+	•	image preview if image_url exists
+	•	cleaner metadata layout
+	•	nicer action row
+🚀 Phase 19.0 — Better Vote UX
+	•	active vote styling refinement
+	•	disable repeated spam-click while request is in progress
+	•	maybe allow removing a vote later
+🚀 Phase 20.0 — Better Submission UX
+	•	inline validation
+	•	disable submit while sending
+	•	clearer success/error feedback
+	•	maybe preview submitted category/platform better
+🚀 Phase 21.0 — Admin Moderation Improvements
+	•	moderation loading states
+	•	rejected history page
+	•	approved history page
+	•	maybe moderation notes later
+🚀 Phase 22.0 — Pagination / Load More
+	.Important once the feed grows.
+	.Why
+	.Frontend-only full-list rendering will not scale forever.
+🚀 Phase 23.0 — Backend Cleanup / Service Quality
+	reusable API helpers
+	•	cleaner error handling
+	•	route/controller separation later if you want
+	•	maybe custom hooks in frontend
+🚀 Phase 24.0 — Deployment Readiness
+	•	environment variables cleanup
+	•	production CORS config
+	•	API URL config
+	•	build/deploy checklist
+

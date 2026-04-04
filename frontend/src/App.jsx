@@ -10,6 +10,9 @@ import UserStatusBar from "./components/UserStatusBar";
 import FeedSection from "./components/FeedSection";
 import PageContainer from "./components/PageContainer";
 import AppHeader from "./components/AppHeader";
+import SearchBar from "./components/SearchBar";
+import SortBar from "./components/SortBar";
+
 
 
 function App() {
@@ -25,6 +28,7 @@ function App() {
   const [sources, setSources] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [bookmarks, setBookmarks] = useState([]);
   const [pendingSources, setPendingSources] = useState([]);
 
@@ -39,6 +43,8 @@ function App() {
   const [sourceImageUrl, setSourceImageUrl] = useState("");
   const [sourcePlatform, setSourcePlatform] = useState("");
   const [sourceCategoryId, setSourceCategoryId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   // ✅ global action messages (replace alert)
   const [successMessage, setSuccessMessage] = useState("");
@@ -430,6 +436,26 @@ async function fetchSources(showLoader = true) {
     }
   }
 
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredSources = sources.filter((source) => {
+  const titleMatch = source.title.toLowerCase().includes(normalizedSearch);
+  const summaryMatch = source.summary
+    ? source.summary.toLowerCase().includes(normalizedSearch)
+    : false;
+  return titleMatch || summaryMatch;
+  });
+  const sortedSources = [...filteredSources].sort((a, b) => {
+  if (sortBy === "score") {
+    return b.score - a.score;
+  }
+  if (sortBy === "upvotes") {
+    return b.upvotes - a.upvotes;
+  }
+  // default: newest
+  return new Date(b.created_at) - new Date(a.created_at);
+  });
+
+
 // ✅ Main-return
   return (
     <PageContainer>
@@ -488,11 +514,18 @@ async function fetchSources(showLoader = true) {
             setSelectedCategory={setSelectedCategory}
             categories={categories}
         />
-
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+          <SortBar
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+          />
           <FeedSection
             loading={loading}
             error={error}
-            sources={sources}
+            sources={sortedSources}
             isBookmarked={isBookmarked}
             handleBookmark={handleBookmark}
             handleVote={handleVote}
