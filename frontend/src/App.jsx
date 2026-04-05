@@ -35,6 +35,7 @@ function App() {
   // ✅ ui state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isSubmittingSource, setIsSubmittingSource] = useState(false);
 
   // ✅ source submission form state
   const [sourceTitle, setSourceTitle] = useState("");
@@ -221,48 +222,63 @@ async function fetchSources(showLoader = true) {
   }
 
   // ✅ submit new source
-  async function handleSubmitSource(e) {
-    e.preventDefault();
-    setSuccessMessage("");
-    setActionError("");
-    if (!user) {
-      setActionError("You must be logged in to submit a source.");
-      return;
-    }
-    try {
-      const res = await fetch("http://localhost:5001/api/sources", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: sourceTitle,
-          url: sourceUrl,
-          summary: sourceSummary || null,
-          image_url: sourceImageUrl || null,
-          platform: sourcePlatform || null,
-          category_id: sourceCategoryId ? Number(sourceCategoryId) : null,
-          submitter_id: user.id,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to submit source");
-      }
-      setSuccessMessage(data.message || "Source submitted successfully");
-      setSourceTitle("");
-      setSourceUrl("");
-      setSourceSummary("");
-      setSourceImageUrl("");
-      setSourcePlatform("");
-      setSourceCategoryId("");
-      if (user.role === "admin") {
-        await fetchPendingSources();
-      }
-    } catch (err) {
-      setActionError(err.message);
-    }
+async function handleSubmitSource(e) {
+  e.preventDefault();
+  setSuccessMessage("");
+  setActionError("");
+  if (!user) {
+    setActionError("You must be logged in to submit a source.");
+    return;
   }
+  if (!sourceTitle.trim()) {
+    setActionError("Title is required.");
+    return;
+  }
+  if (!sourceUrl.trim()) {
+    setActionError("URL is required.");
+    return;
+  }
+  if (!sourceUrl.trim().startsWith("http")) {
+    setActionError("URL must start with http or https.");
+    return;
+  }
+  setIsSubmittingSource(true);
+  try {
+    const res = await fetch("http://localhost:5001/api/sources", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: sourceTitle.trim(),
+        url: sourceUrl.trim(),
+        summary: sourceSummary.trim() || null,
+        image_url: sourceImageUrl.trim() || null,
+        platform: sourcePlatform.trim() || null,
+        category_id: sourceCategoryId ? Number(sourceCategoryId) : null,
+        submitter_id: user.id,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to submit source");
+    }
+    setSuccessMessage(data.message || "Source submitted successfully");
+    setSourceTitle("");
+    setSourceUrl("");
+    setSourceSummary("");
+    setSourceImageUrl("");
+    setSourcePlatform("");
+    setSourceCategoryId("");
+    if (user.role === "admin") {
+      await fetchPendingSources();
+    }
+  } catch (err) {
+    setActionError(err.message);
+  } finally {
+    setIsSubmittingSource(false);
+  }
+}
 
     // ✅ logout handler
     function handleLogout() {
@@ -491,6 +507,7 @@ async function fetchSources(showLoader = true) {
           setSourceCategoryId={setSourceCategoryId}
           categories={categories}
           handleSubmitSource={handleSubmitSource}
+          isSubmittingSource={isSubmittingSource}
         />
       )}
 

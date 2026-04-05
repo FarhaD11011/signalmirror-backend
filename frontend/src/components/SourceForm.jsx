@@ -14,6 +14,7 @@ function SourceForm({
     setSourceCategoryId,
     categories,
     handleSubmitSource,
+    isSubmittingSource,
 }) {
   return (
     <div
@@ -36,6 +37,7 @@ function SourceForm({
             placeholder="Title"
             value={sourceTitle}
             onChange={(e) => setSourceTitle(e.target.value)}
+            disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           />
         </div>
@@ -46,6 +48,7 @@ function SourceForm({
             placeholder="URL"
             value={sourceUrl}
             onChange={(e) => setSourceUrl(e.target.value)}
+            disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           />
         </div>
@@ -66,6 +69,7 @@ function SourceForm({
             placeholder="Image URL (optional)"
             value={sourceImageUrl}
             onChange={(e) => setSourceImageUrl(e.target.value)}
+            disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           />
         </div>
@@ -76,6 +80,7 @@ function SourceForm({
             placeholder="Platform (optional)"
             value={sourcePlatform}
             onChange={(e) => setSourcePlatform(e.target.value)}
+            disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           />
         </div>
@@ -84,6 +89,7 @@ function SourceForm({
           <select
             value={sourceCategoryId}
             onChange={(e) => setSourceCategoryId(e.target.value)}
+            disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           >
             <option value="">Select Category</option>
@@ -95,19 +101,22 @@ function SourceForm({
           </select>
         </div>
 
-        <button
-          type="submit"
-          style={{
-            padding: "8px 12px",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            background: "#007bff",
-            color: "white",
-          }}
-        >
-          Submit Source
-        </button>
+              <button
+              type="submit"
+              disabled={isSubmittingSource}
+              style={{
+                padding: "10px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: isSubmittingSource ? "not-allowed" : "pointer",
+                background: isSubmittingSource ? "#6c757d" : "#007bff",
+                color: "white",
+                width: "100%",
+                fontWeight: "bold",
+              }}
+              >
+              {isSubmittingSource ? "Submitting..." : "Submit Source"}
+          </button>
       </form>
     </div>
   );

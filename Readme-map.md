@@ -2171,3 +2171,44 @@ My recommended order from here
 	•	API URL config
 	•	build/deploy checklist
 
+<!-- 🚀 Phase 17.0 — Sorting / Ranking -->
+Step 1 — Add sortBy state
+📁 File
+frontend/src/App.jsx
+const [sortBy, setSortBy] = useState("newest");
+Step 2 — Create SortBar.jsx
+📁 File
+frontend/src/components/SortBar.jsx
+3 — Import SortBar into App.jsx
+📁 File
+frontend/src/App.jsx
+import SortBar from "./components/SortBar";
+Step 4 — Render SortBar
+📁 File
+frontend/src/App.jsx
+You already render CategoryFilter and SearchBar.
+Add SortBar under SearchBar.
+Step 5 — Create sortedSources
+📁 File
+frontend/src/App.jsx
+You already created filteredSources.
+6 — Pass sortedSources into FeedSection
+📁 File
+frontend/src/App.jsx
+change: sources={filteredSources}
+to: sources={sortedSources}
+Step 7 — Test
+SELECT id, title, status FROM sources ORDER BY id DESC;
+INSERT INTO sources (title, url, summary, platform, status, category_id, submitter_id)
+VALUES
+('Tech News Alpha', 'https://example.com/tech-news-alpha', 'Alpha tech summary', 'website', 'approved', 1, 1),
+('Ocean Climate Report', 'https://example.com/ocean-climate-report', 'Ocean climate summary', 'website', 'approved', 1, 1),
+('AI Breakthrough 2026', 'https://example.com/ai-breakthrough-2026', 'AI summary', 'website', 'approved', 1, 1),
+('Sports Weekly Update', 'https://example.com/sports-weekly-update', 'Sports summary', 'website', 'approved', 1, 1),
+('Economy Forecast', 'https://example.com/economy-forecast', 'Economy summary', 'website', 'approved', 1, 1),
+('SpaceX Launch News', 'https://example.com/spacex-launch-news', 'Space summary', 'website', 'approved', 1, 1),
+('Health Research Study', 'https://example.com/health-research-study', 'Health summary', 'website', 'approved', 1, 1),
+('Crypto Market Trends', 'https://example.com/crypto-market-trends', 'Crypto summary', 'website', 'approved', 1, 1);
+<!-- 🚀 Commit this phase -->
+git add .
+git commit -m "Add sorting feature with newest, score, and upvotes options"
