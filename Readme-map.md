@@ -2212,3 +2212,44 @@ VALUES
 <!-- 🚀 Commit this phase -->
 git add .
 git commit -m "Add sorting feature with newest, score, and upvotes options"
+<!-- 🚀 Phase 20.0 — Better Submission UX -->
+	•	clearer validation before submit
+	•	disable submit while request is in progress
+	•	better button text while submitting
+	•	cleaner success/error experience
+Step 1 — Add submitting state
+📁 File
+frontend/src/App.jsx
+Add this near your other UI state:
+const [isSubmittingSource, setIsSubmittingSource] = useState(false);
+Step 2 — Improve handleSubmitSource()
+📁 File
+frontend/src/App.jsx
+Replace your current handleSubmitSource with this version:
+Step 3 — Pass submitting state into SourceForm
+📁 File
+frontend/src/App.jsx
+Find your SourceForm render and add the new prop:
+Step 4 — Update SourceForm.jsx
+📁 File
+frontend/src/components/SourceForm.jsx
+Update the component signature to receive isSubmittingSource:
+Step 5 — Disable form fields while submitting
+📁 File
+frontend/src/components/SourceForm.jsx
+Add disabled={isSubmittingSource} to each input, textarea, and select.
+Do that for:
+	•	title
+	•	URL
+	•	summary
+	•	image URL
+	•	platform
+	•	category select
+Step 6 — Improve submit button UX
+📁 File
+frontend/src/components/SourceForm.jsx
+Update the submit button to this:
+Step 7 — Test
+ <!-- Commit Phase 20.0 -->
+ git add .
+git commit -m "Improve source submission UX with validation, loading state, and disabled inputs"

@@ -2,6 +2,7 @@ function PendingSourcesPanel({
   pendingSources,
   handleApproveSource,
   handleRejectSource,
+  processingSourceId,
 }) {
   return (
     <div
@@ -35,31 +36,37 @@ function PendingSourcesPanel({
 
             <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
               <button
-                onClick={() => handleApproveSource(source.id)}
-                style={{
-                  padding: "8px 12px",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  background: "green",
-                  color: "white",
-                }}
-              >
-                Approve
-              </button>
+                  onClick={() => handleApproveSource(source.id)}
+                  disabled={processingSourceId === source.id}
+                  style={{
+                    padding: "8px 12px",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor:
+                      processingSourceId === source.id ? "not-allowed" : "pointer",
+                    background:
+                      processingSourceId === source.id ? "#6c757d" : "green",
+                    color: "white",
+                  }}
+                >
+                  {processingSourceId === source.id ? "Processing..." : "Approve"}
+                </button>
 
               <button
                 onClick={() => handleRejectSource(source.id)}
+                disabled={processingSourceId === source.id}
                 style={{
                   padding: "8px 12px",
                   border: "none",
                   borderRadius: "6px",
-                  cursor: "pointer",
-                  background: "#dc3545",
+                  cursor:
+                    processingSourceId === source.id ? "not-allowed" : "pointer",
+                  background:
+                    processingSourceId === source.id ? "#6c757d" : "#dc3545",
                   color: "white",
                 }}
               >
-                Reject
+                {processingSourceId === source.id ? "Processing..." : "Reject"}
               </button>
             </div>
           </div>

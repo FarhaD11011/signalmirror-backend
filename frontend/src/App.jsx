@@ -45,6 +45,7 @@ function App() {
   const [sourcePlatform, setSourcePlatform] = useState("");
   const [sourceCategoryId, setSourceCategoryId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [processingSourceId, setProcessingSourceId] = useState(null);
 
 
   // ✅ global action messages (replace alert)
@@ -392,6 +393,7 @@ async function handleSubmitSource(e) {
   async function handleApproveSource(sourceId) {
     setSuccessMessage("");
     setActionError("");
+    setProcessingSourceId(sourceId);
     try {
       const savedToken = localStorage.getItem("token");
       if (!savedToken) {
@@ -417,6 +419,8 @@ async function handleSubmitSource(e) {
     } catch (err) {
       console.error("Approve source error:", err.message);
       setActionError(err.message);
+    } finally{
+      setProcessingSourceId(null);
     }
   }
 
@@ -424,6 +428,7 @@ async function handleSubmitSource(e) {
   async function handleRejectSource(sourceId) {
     setSuccessMessage("");
     setActionError("");
+    setProcessingSourceId(sourceId);
     try {
       const savedToken = localStorage.getItem("token");
       if (!savedToken) {
@@ -445,10 +450,12 @@ async function handleSubmitSource(e) {
       }
       setSuccessMessage(data.message || "Source rejected successfully");
       await fetchPendingSources();
-      await fetchSources();
+      await fetchSources(false); // ✅ silent refresh
     } catch (err) {
       console.error("Reject source error:", err.message);
       setActionError(err.message);
+    } finally{
+      setProcessingSourceId(null);
     }
   }
 
@@ -523,6 +530,7 @@ async function handleSubmitSource(e) {
           pendingSources={pendingSources}
           handleApproveSource={handleApproveSource}
           handleRejectSource={handleRejectSource}
+          processingSourceId={processingSourceId}
   />
       )}
 

@@ -5,14 +5,78 @@ const optionalAuthMiddleware = require("../middleware/optionalAuthMiddleware");
 
 
 // ✅ GET /api/sources
-// public feed: only approved sources, optionally filtered by category
+// public feed: only approved sources, optionally filtered by category, with pagination
 router.get("/", optionalAuthMiddleware, async (req, res) => {
   try {
-    const { category_id } = req.query;
+    const { category_id, page = 1, limit = 5 } = req.query;
     const userId = req.user?.id || null;
 
-    const values = [userId];
-    let query = `
+    const parsedPage = Number(page);
+    const parsedLimit = Number(limit);
+
+    if (!Number.isInteger(parsedPage) || parsedPage <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "page must be a positive integer",
+      });
+    }
+
+    if (!Number.isInteger(parsedLimit) || parsedLimit <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "limit must be a positive integer",
+      });
+    }
+
+    const offset = (parsedPage - 1) * parsedLimit;
+
+    let whereClause = `WHERE sources.status = 'approved'`;
+
+    const countValues = [];
+    const dataValues = [userId];
+
+    if (category_id !== undefined && category_id !== "") {
+      const parsedCategoryId = Number(category_id);
+
+      if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "category_id must be a positive integer",
+        });
+      }
+
+      // ✅ count query placeholder starts at $1
+      countValues.push(parsedCategoryId);
+
+      // ✅ data query already uses $1 for userId, so category becomes $2
+      dataValues.push(parsedCategoryId);
+
+      whereClause += ` AND sources.category_id = ${
+        countValues.length > 0 ? "$1" : ""
+      }`;
+    }
+
+    // ✅ total count query
+    const countQuery = `
+      SELECT COUNT(*) AS total
+      FROM sources
+      ${whereClause}
+    `;
+
+    const countResult = await pool.query(countQuery, countValues);
+    const totalSources = Number(countResult.rows[0].total);
+    const totalPages = Math.ceil(totalSources / parsedLimit);
+
+    // ✅ main data query placeholders
+    let dataWhereClause = `WHERE sources.status = 'approved'`;
+    if (category_id !== undefined && category_id !== "") {
+      dataWhereClause += ` AND sources.category_id = $2`;
+    }
+
+    dataValues.push(parsedLimit);
+    dataValues.push(offset);
+
+    const query = `
       SELECT
         sources.*,
         COALESCE(SUM(CASE WHEN votes.vote_type = 'up' THEN 1 ELSE 0 END), 0) AS upvotes,
@@ -32,28 +96,14 @@ router.get("/", optionalAuthMiddleware, async (req, res) => {
         ) AS user_vote
       FROM sources
       LEFT JOIN votes ON sources.id = votes.source_id
-      WHERE sources.status = 'approved'
-    `;
-
-    if (category_id !== undefined && category_id !== "") {
-      const parsedCategoryId = Number(category_id);
-
-      if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
-        return res.status(400).json({
-          message: "category_id must be a positive integer",
-        });
-      }
-
-      values.push(parsedCategoryId);
-      query += ` AND sources.category_id = $2`;
-    }
-
-    query += `
+      ${dataWhereClause}
       GROUP BY sources.id
       ORDER BY sources.created_at DESC
+      LIMIT $${dataValues.length - 1}
+      OFFSET $${dataValues.length}
     `;
 
-    const result = await pool.query(query, values);
+    const result = await pool.query(query, dataValues);
 
     const formattedSources = result.rows.map((source) => ({
       ...source,
@@ -66,6 +116,10 @@ router.get("/", optionalAuthMiddleware, async (req, res) => {
     res.json({
       success: true,
       count: formattedSources.length,
+      totalSources,
+      totalPages,
+      currentPage: parsedPage,
+      limit: parsedLimit,
       sources: formattedSources,
     });
   } catch (error) {
