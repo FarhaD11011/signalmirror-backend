@@ -1,3 +1,5 @@
+
+import { API_BASE_URL } from "./config";
 import { useEffect, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import BookmarksPanel from "./components/BookmarksPanel";
@@ -69,7 +71,7 @@ function App() {
         setBookmarks([]);
         return;
       }
-      const res = await fetch("http://localhost:5001/api/bookmarks", {
+      const res = await fetch(`${API_BASE_URL}/api/bookmarks`, {
         headers: {
           Authorization: `Bearer ${savedToken}`,
         },
@@ -92,7 +94,7 @@ function App() {
         setPendingSources([]);
         return;
       }
-      const res = await fetch("http://localhost:5001/api/admin/pending", {
+      const res = await fetch(`${API_BASE_URL}/api/admin/pending`, {
         headers: {
           Authorization: `Bearer ${savedToken}`,
         },
@@ -116,7 +118,7 @@ async function fetchSources(showLoader = true) {
       setIsPageChanging(true);
     }
     setError("");
-    let url = `http://localhost:5001/api/sources?page=${currentPage}&limit=${pageLimit}`;
+    let url = `${API_BASE_URL}/api/sources?page=${currentPage}&limit=${pageLimit}`;
     if (selectedCategory) {
       url += `&category_id=${selectedCategory}`;
     }
@@ -154,7 +156,7 @@ async function fetchSources(showLoader = true) {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch("http://localhost:5001/api/categories");
+        const res = await fetch(`${API_BASE_URL}/api/categories`);
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.message || "Failed to fetch categories");
@@ -213,7 +215,7 @@ async function fetchSources(showLoader = true) {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5001/api/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -264,7 +266,7 @@ async function handleSubmitSource(e) {
   }
   setIsSubmittingSource(true);
   try {
-    const res = await fetch("http://localhost:5001/api/sources", {
+    const res = await fetch(`${API_BASE_URL}/api/sources`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -322,7 +324,7 @@ async function handleSubmitSource(e) {
         setActionError("You must be logged in to bookmark");
         return;
       }
-      const res = await fetch("http://localhost:5001/api/bookmarks", {
+      const res = await fetch(`${API_BASE_URL}/api/bookmarks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -354,7 +356,7 @@ async function handleSubmitSource(e) {
         return;
       }
       const res = await fetch(
-        `http://localhost:5001/api/bookmarks/${sourceId}`,
+        `${API_BASE_URL}/api/bookmarks/${sourceId}`,
         {
           method: "DELETE",
           headers: {
@@ -386,7 +388,7 @@ async function handleSubmitSource(e) {
         setActionError("You must be logged in to vote.");
         return;
       }
-      const res = await fetch("http://localhost:5001/api/votes", {
+      const res = await fetch(`${API_BASE_URL}/api/votes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -420,7 +422,7 @@ async function handleSubmitSource(e) {
         return;
       }
       const res = await fetch(
-        `http://localhost:5001/api/admin/approve/${sourceId}`,
+        `${API_BASE_URL}/api/admin/approve/${sourceId}`,
         {
           method: "PATCH",
           headers: {
@@ -455,7 +457,7 @@ async function handleSubmitSource(e) {
         return;
       }
       const res = await fetch(
-        `http://localhost:5001/api/admin/reject/${sourceId}`,
+        `${API_BASE_URL}/api/admin/reject/${sourceId}`,
         {
           method: "PATCH",
           headers: {

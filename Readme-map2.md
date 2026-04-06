@@ -76,3 +76,127 @@ page=0
 commit it:
 git add .
 git commit -m "Add backend pagination support to sources feed"
+<!-- 🚀 Phase 22.1 — Frontend Pagination Controls -->
+22.1 — Add currentPage state and wire fetchSources() to page and limit
+Step 1 — Add pagination state
+📁 File
+frontend/src/App.jsx
+Add these near your other state variables:
+const [currentPage, setCurrentPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
+const [totalSources, setTotalSources] = useState(0);
+const [pageLimit] = useState(5);
+Step 2 — Update fetchSources() to send page and limit
+📁 File
+frontend/src/App.jsx
+Find this part in fetchSources():
+Step 3 — Store pagination metadata from backend
+📁 File
+frontend/src/App.jsx
+Inside fetchSources(), after:
+Step 4 — Re-fetch when page changes
+📁 File
+frontend/src/App.jsx
+Right now you likely have:
+Step 5 — Reset page when category changes
+If user changes category while on page 3, you don’t want to stay stuck on page 3 for a smaller category list.
+📁 File
+frontend/src/App.jsx
+Add this effect:
+useEffect(() => {
+  setCurrentPage(1);
+}, [selectedCategory]);
+Step 6 — Create PaginationControls.jsx
+📁 File
+frontend/src/components/PaginationControls.jsx
+Create this file and add:
+Step 7 — Import and render pagination controls
+📁 File
+frontend/src/App.jsx
+Add import: import PaginationControls from "./components/PaginationControls";
+Add handlers in App.jsx
+Put these above return:
+Render the pagination controls
+Place this below FeedSection in App.jsx:
+Step 8 — Important note about search and sorting
+Right now your flow is:
+	•	backend paginates
+	•	frontend search filters current page only
+	•	frontend sort sorts current page only
+That is okay for now, but it means search and sort are no longer global across all sources.
+We’ll fix that later when we move search/sort to the backend.
+For now, this is acceptable and expected.
+Step 9 — Test
+Phase 22.2 — Smooth Pagination Transition
+Best fix:
+Step 1 — Add page-loading state
+📁 File
+frontend/src/App.jsx
+Add: const [isPageChanging, setIsPageChanging] = useState(false);
+Put it near your other UI state.
+Step 2 — Update fetchSources() to support silent pagination
+📁 File
+frontend/src/App.jsx
+Replace your current fetchSources(showLoader = true) with this version:
+Step 3 — Use silent fetch when page changes
+📁 File
+frontend/src/App.jsx
+Right now you likely have:
+Better final version
+Use a ref? That’s more complexity than needed now.
+Let’s keep it simpler:
+Keep one effect:
+useEffect(() => {
+  fetchSources(currentPage === 1);
+}, [selectedCategory, currentPage]);
+Step 4 — Disable pagination buttons while page is changing
+📁 File
+frontend/src/components/PaginationControls.jsx
+Update the component signature:
+Update styles too:
+For both buttons, use isPageChanging in the disabled logic:
+cursor:
+  currentPage === 1 || isPageChanging ? "not-allowed" : "pointer",
+background:
+  currentPage === 1 || isPageChanging ? "#6c757d" : "#007bff",
+Button text
+Optional polish:
+{isPageChanging ? "Loading..." : "Previous"}
+{isPageChanging ? "Loading..." : "Next"}
+tep 5 — Pass isPageChanging into PaginationControls
+📁 File
+frontend/src/App.jsx
+Update:
+<PaginationControls
+...
+onNext={handleNextPage}
+isPageChanging={isPageChanging}
+/>
+<!-- commit it: -->
+git add .
+git commit -m "Add frontend pagination controls and smooth page transitions"
+
+<!-- 🚀🚀🚀🚀🚀🚀 Next major phase: Phase 24.0 — Deployment Readiness🚀🚀🚀🚀🚀🚀 -->
+This is the right “last stage” direction now.
+Goal
+Take the app from:
+	•	works locally on your laptop
+to:
+	•	structured so it can be deployed and used by real people
+This phase will show you what the end product looks like operationally.
+
+Phase 24.0 roadmap
+	1.	Remove hardcoded localhost URLs
+	2.	Add env-based API config
+	3.	Verify backend env and CORS
+	4.	Run end-user walkthrough
+	5.	Choose hosting
+	6.	Deploy
+	7.	Post-deploy fixes if needed
+That is the best path to see the real product.
+Start here
+
+🚀 Phase 24.1 — Centralize API Base URL
+This should be first, because it touches almost every frontend request and is required before deployment.
+What we’ll do
+Instead of repeating:
