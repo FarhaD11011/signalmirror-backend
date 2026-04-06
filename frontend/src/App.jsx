@@ -12,6 +12,7 @@ import PageContainer from "./components/PageContainer";
 import AppHeader from "./components/AppHeader";
 import SearchBar from "./components/SearchBar";
 import SortBar from "./components/SortBar";
+import PaginationControls from "./components/PaginationControls";
 
 
 
@@ -31,11 +32,18 @@ function App() {
   const [sortBy, setSortBy] = useState("newest");
   const [bookmarks, setBookmarks] = useState([]);
   const [pendingSources, setPendingSources] = useState([]);
+  // ✅ frontend-pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalSources, setTotalSources] = useState(0);
+  const [pageLimit] = useState(5);
+
 
   // ✅ ui state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSubmittingSource, setIsSubmittingSource] = useState(false);
+  const [isPageChanging, setIsPageChanging] = useState(false);
 
   // ✅ source submission form state
   const [sourceTitle, setSourceTitle] = useState("");
@@ -104,11 +112,13 @@ async function fetchSources(showLoader = true) {
   try {
     if (showLoader) {
       setLoading(true);
+    } else {
+      setIsPageChanging(true);
     }
     setError("");
-    let url = "http://localhost:5001/api/sources";
+    let url = `http://localhost:5001/api/sources?page=${currentPage}&limit=${pageLimit}`;
     if (selectedCategory) {
-      url += `?category_id=${selectedCategory}`;
+      url += `&category_id=${selectedCategory}`;
     }
     const savedToken = localStorage.getItem("token");
     const res = await fetch(url, {
@@ -121,11 +131,15 @@ async function fetchSources(showLoader = true) {
       throw new Error(data.message || "Failed to fetch sources");
     }
     setSources(data.sources || []);
+    setTotalPages(data.totalPages || 1);
+    setTotalSources(data.totalSources || 0);
   } catch (err) {
     setError(err.message || "Something went wrong");
   } finally {
     if (showLoader) {
       setLoading(false);
+    } else {
+      setIsPageChanging(false);
     }
   }
 }
@@ -180,7 +194,12 @@ async function fetchSources(showLoader = true) {
 
   // ✅ load sources when category changes
   useEffect(() => {
-    fetchSources();
+    fetchSources(currentPage === 1);
+    }, [selectedCategory, currentPage]);
+
+  // ✅ 
+  useEffect(() => {
+    setCurrentPage(1);
   }, [selectedCategory]);
 
 
@@ -478,6 +497,13 @@ async function handleSubmitSource(e) {
   return new Date(b.created_at) - new Date(a.created_at);
   });
 
+  function handlePreviousPage() {
+  setCurrentPage((prev) => Math.max(prev - 1, 1));
+  }
+
+  function handleNextPage() {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  }
 
 // ✅ Main-return
   return (
@@ -558,6 +584,14 @@ async function handleSubmitSource(e) {
             setActionError={setActionError}
             setSuccessMessage={setSuccessMessage}
         />
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalSources={totalSources}
+            onPrevious={handlePreviousPage}
+            onNext={handleNextPage}
+            isPageChanging={isPageChanging}
+/>
     </PageContainer>
   );
 }
