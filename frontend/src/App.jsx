@@ -26,6 +26,7 @@ function App() {
   // ✅ login form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authMode, setAuthMode] = useState("login"); // "login" | "signup"
 
   // ✅ app data state
   const [sources, setSources] = useState([]);
@@ -205,6 +206,38 @@ async function fetchSources(showLoader = true) {
   }, [selectedCategory]);
 
 
+  async function handleSignup(e) {
+  e.preventDefault();
+  setSuccessMessage("");
+  setActionError("");
+  if (!email.trim() || !password.trim()) {
+    setActionError("Email and password are required");
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: email.split("@")[0], // simple username
+        email,
+        password,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Signup failed");
+    }
+    setSuccessMessage("Signup successful. You can now log in.");
+    setAuthMode("login"); // switch back to login
+  } catch (err) {
+    setActionError(err.message);
+  }
+}
+
+
   // ✅ login handler
   async function handleLogin(e) {
     e.preventDefault();
@@ -378,8 +411,6 @@ async function handleSubmitSource(e) {
 
   // ✅ vote on a source
   async function handleVote(sourceId, voteType) {
-    
-
     setSuccessMessage("");
     setActionError("");
     try {
@@ -521,6 +552,9 @@ async function handleSubmitSource(e) {
             setEmail={setEmail}
             setPassword={setPassword}
             handleLogin={handleLogin}
+            handleSignup={handleSignup}
+            authMode={authMode}
+            setAuthMode={setAuthMode}
           />
         ) : (
           <UserStatusBar user={user} handleLogout={handleLogout} />

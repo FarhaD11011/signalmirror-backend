@@ -4,10 +4,13 @@ function LoginForm({
   setEmail,
   setPassword,
   handleLogin,
+  handleSignup,
+  authMode,
+  setAuthMode,
 }) {
   return (
     <form
-      onSubmit={handleLogin}
+      onSubmit={authMode === "login" ? handleLogin : handleSignup}
       style={{
         marginBottom: "20px",
         background: "white",
@@ -16,7 +19,42 @@ function LoginForm({
         boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
       }}
     >
-      <h2 style={{ marginTop: 0 }}>Login</h2>
+      <div style={{ marginBottom: "12px" }}>
+        <button
+          type="button"
+          onClick={() => setAuthMode("login")}
+          style={{
+            marginRight: "8px",
+            padding: "6px 10px",
+            background: authMode === "login" ? "#007bff" : "#ccc",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Login
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAuthMode("signup")}
+          style={{
+            padding: "6px 10px",
+            background: authMode === "signup" ? "#007bff" : "#ccc",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Signup
+        </button>
+      </div>
+
+      <h2 style={{ marginTop: 0 }}>
+        {authMode === "login" ? "Login" : "Sign Up"}
+      </h2>
 
       <input
         type="email"
@@ -35,7 +73,7 @@ function LoginForm({
       />
 
       <button type="submit" style={{ padding: "8px 12px" }}>
-        Login
+        {authMode === "login" ? "Login" : "Create Account"}
       </button>
     </form>
   );

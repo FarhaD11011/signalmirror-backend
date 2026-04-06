@@ -230,3 +230,32 @@ Step 6 — Test app normally
 <!-- commit it -->
 git add .
 git commit -m "Centralize frontend API base URL with Vite env config"
+<!-- 🚀 Phase 24.2 — Backend Env + CORS Cleanup -->
+Goal
+Make backend accept requests from:
+	•	local frontend in development
+	•	deployed frontend in production
+using environment variables instead of open CORS.
+🟩 Step 1 — Update backend .env
+📁 File
+backend/.env
+Add this line:
+FRONTEND_URL=http://localhost:5173
+🟩 Step 2 — Update server.js
+📁 File
+backend/server.js
+Replace this: app.use(cors());
+to :  
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+🟩 Step 3 — Optional safer console log
+change to this:
+console.log(`Server running on port ${PORT}`);
+🟩 Step 5 — Restart backend
+<!-- commit it -->
+git add .
+git commit -m "Configure backend CORS and frontend origin with environment variables"
