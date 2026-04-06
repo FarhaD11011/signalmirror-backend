@@ -9,13 +9,18 @@ const votesRoutes = require("./src/routes/votesRoutes");
 const bookmarksRoutes = require("./src/routes/bookmarksRoutes");
 const categoriesRoutes = require("./src/routes/categoriesRoutes");
 
-
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -41,20 +46,12 @@ app.get("/db-test", async (req, res) => {
 });
 
 app.use("/api/sources", sourcesRoutes);
-
 app.use("/api/admin", adminRoutes);
-
 app.use("/api/auth", authRoutes);
-
 app.use("/api/votes", votesRoutes);
-
 app.use("/api/bookmarks", bookmarksRoutes);
-
 app.use("/api/categories", categoriesRoutes);
 
-
-
-
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

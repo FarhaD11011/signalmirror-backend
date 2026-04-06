@@ -200,3 +200,33 @@ Start here
 This should be first, because it touches almost every frontend request and is required before deployment.
 What we’ll do
 Instead of repeating:
+Step 1 — Create .env file for frontend
+📁 File
+frontend/.env
+Create this file and add: 
+Step 2 — Create API config file
+📁 File
+frontend/src/config.js
+Create this file and add:
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
+  Step 3 — Import config into App.jsx
+📁 File
+frontend/src/App.jsx
+Add this import near the top:
+import { API_BASE_URL } from "./config";
+Step 4 — Replace hardcoded backend URLs in App.jsx
+📁 File
+frontend/src/App.jsx
+Now replace every fetch URL like:
+"http://localhost:5001/api/categories"
+to:
+`${API_BASE_URL}/api/categories`
+for all:
+Categories, login, Submit source, Bookmark fetch, Bookmark add, Remove Bookmark, Pending Sources, public sources, Voting, Approve source, Reject source, 
+ Step 5 — Restart frontend dev server
+Because Vite reads .env at startup, you need to restart the frontend.
+Step 6 — Test app normally
+<!-- commit it -->
+git add .
+git commit -m "Centralize frontend API base URL with Vite env config"
