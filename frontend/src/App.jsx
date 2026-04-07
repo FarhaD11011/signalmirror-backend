@@ -162,7 +162,7 @@ async function fetchSources(showLoader = true) {
       if (!res.ok) {
         throw new Error(data.message || "Failed to fetch RSS news");
       }
-      setRssSources(data.sources || []);
+      setRssSources(data.sections || []);
     } catch (err) {
       setRssError(err.message || "Something went wrong");
     } finally {

@@ -304,3 +304,33 @@ Step 1 — Install RSS parser
 backend/
 Run:
 npm install rss-parser
+
+
+rssSources.map((section, idx) => (
+  <div key={idx} style={{ marginBottom: "20px" }}>
+    <h3 style={{ borderBottom: "2px solid #eee", paddingBottom: "4px" }}>
+      {section.title}
+    </h3>
+
+    {section.items.map((item, index) => (
+      <div
+        key={`${item.url}-${index}`}
+        style={{
+          padding: "10px 0",
+          borderBottom: "1px solid #eee",
+        }}
+      >
+        <strong>{item.title}</strong>
+        <p style={{ margin: "6px 0" }}>{item.summary}</p>
+
+        <div style={{ fontSize: "13px", color: "#666" }}>
+          {item.source_name}
+        </div>
+
+        <a href={item.url} target="_blank" rel="noreferrer">
+          Visit Source
+        </a>
+      </div>
+    ))}
+  </div>
+))
