@@ -8,6 +8,8 @@ const authRoutes = require("./src/routes/authRoutes");
 const votesRoutes = require("./src/routes/votesRoutes");
 const bookmarksRoutes = require("./src/routes/bookmarksRoutes");
 const categoriesRoutes = require("./src/routes/categoriesRoutes");
+const externalRoutes = require("./src/routes/externalRoutes");
+
 
 dotenv.config();
 
@@ -51,6 +53,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/votes", votesRoutes);
 app.use("/api/bookmarks", bookmarksRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/external", externalRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

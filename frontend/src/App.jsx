@@ -15,6 +15,7 @@ import AppHeader from "./components/AppHeader";
 import SearchBar from "./components/SearchBar";
 import SortBar from "./components/SortBar";
 import PaginationControls from "./components/PaginationControls";
+import RssNewsSection from "./components/RssNewsSection";
 
 
 
@@ -58,6 +59,10 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [processingSourceId, setProcessingSourceId] = useState(null);
 
+  // ✅ ....
+  const [rssSources, setRssSources] = useState([]);
+  const [rssLoading, setRssLoading] = useState(true);
+  const [rssError, setRssError] = useState("");
 
   // ✅ global action messages (replace alert)
   const [successMessage, setSuccessMessage] = useState("");
@@ -147,6 +152,24 @@ async function fetchSources(showLoader = true) {
   }
 }
 
+  // ✅ fetch:
+  async function fetchRssSources() {
+    try {
+      setRssLoading(true);
+      setRssError("");
+      const res = await fetch(`${API_BASE_URL}/api/external/rss-news`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch RSS news");
+      }
+      setRssSources(data.sources || []);
+    } catch (err) {
+      setRssError(err.message || "Something went wrong");
+    } finally {
+      setRssLoading(false);
+    }
+  }
+
   // ✅ helper: check whether a source is already bookmarked
   function isBookmarked(sourceId) {
     if (!Array.isArray(bookmarks)) return false;
@@ -205,6 +228,10 @@ async function fetchSources(showLoader = true) {
     setCurrentPage(1);
   }, [selectedCategory]);
 
+  // ✅ 
+  useEffect(() => {
+  fetchRssSources();
+  }, []);
 
   async function handleSignup(e) {
   e.preventDefault();
@@ -608,6 +635,11 @@ async function handleSubmitSource(e) {
           <SortBar
             sortBy={sortBy}
             setSortBy={setSortBy}
+          />
+          <RssNewsSection
+            rssSources={rssSources}
+            rssLoading={rssLoading}
+            rssError={rssError}
           />
           <FeedSection
             loading={loading}

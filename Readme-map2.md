@@ -259,3 +259,48 @@ console.log(`Server running on port ${PORT}`);
 <!-- commit it -->
 git add .
 git commit -m "Configure backend CORS and frontend origin with environment variables"
+<!-- 🚀 Phase 24.3B.1 — Signup UI (Clean UX) -->
+Fix Signup Toggle UI
+📁 File
+frontend/src/components/LoginForm.jsx
+Replace the whole file with this:
+Also verify App.jsx
+📁 File
+frontend/src/App.jsx
+Make sure you have this state:
+const [authMode, setAuthMode] = useState("login");
+And make sure your LoginForm render is exactly like this:
+<LoginForm
+  email={email}
+  password={password}
+  setEmail={setEmail}
+  setPassword={setPassword}
+  handleLogin={handleLogin}
+  handleSignup={handleSignup}
+  authMode={authMode}
+  setAuthMode={setAuthMode}
+/>
+Also make sure handleSignup function exists in App.jsx
+Use this:
+save and resatrt dev
+<!-- Commit this phase -->
+git add .
+git commit -m "Add signup UI with login/signup toggle and integrate signup API"
+<!-- 🚀 Next step: Phase 24.3C — Admin Walkthrough -->
+📌 Report back in this format:
+Admin login works
+Pending shows
+Approve works
+Reject works
+Feed updates correctly
+Admin UX feels ...
+<!-- commit it.. -->
+git add .
+git commit -m "Configure backend CORS and frontend origin with environment variables"
+
+<!-- 🚀🚀🚀🚀 Phase 25.0 — RSS Aggregation (Free External News Section)🚀🚀🚀 -->
+Step 1 — Install RSS parser
+📁 File
+backend/
+Run:
+npm install rss-parser
