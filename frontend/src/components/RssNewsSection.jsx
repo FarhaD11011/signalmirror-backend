@@ -24,24 +24,39 @@ function RssNewsSection({ rssSources, rssLoading, rssError }) {
     </h3>
 
     {section.items.map((item, index) => (
-      <div
-        key={`${item.url}-${index}`}
-        style={{
-          padding: "10px 0",
-          borderBottom: "1px solid #eee",
-        }}
-      >
-        <strong>{item.title}</strong>
-        <p style={{ margin: "6px 0" }}>{item.summary}</p>
 
-        <div style={{ fontSize: "13px", color: "#666" }}>
-          {item.source_name}
-        </div>
-
-        <a href={item.url} target="_blank" rel="noreferrer">
+           <div
+              key={`${item.url}-${index}`}
+              style={{
+                padding: "10px 0",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              {item.image_url && (
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  style={{
+                    width: "100%",
+                    maxWidth: "320px",
+                    height: "180px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    marginBottom: "10px",
+                    display: "block",
+                  }}
+                />
+              )}
+              <strong>{item.title}</strong>
+              <p style={{ margin: "6px 0" }}>{item.summary}</p>
+              <div style={{ fontSize: "13px", color: "#666" }}>
+                {item.source_name}
+              </div>
+              <a href={item.url} target="_blank" rel="noreferrer">
                 Visit Source
-                </a>
+              </a>
             </div>
+
             ))}
         </div>
         ))

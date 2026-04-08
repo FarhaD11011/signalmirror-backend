@@ -2,7 +2,14 @@ const express = require("express");
 const Parser = require("rss-parser");
 
 const router = express.Router();
-const parser = new Parser();
+const parser = new Parser({
+  customFields: {
+    item: [
+      ["media:content", "mediaContent", { keepArray: true }],
+      ["media:thumbnail", "mediaThumbnail", { keepArray: true }],
+    ],
+  },
+});
 
 // 🌍 Multiple RSS sources
 const RSS_FEEDS = [
@@ -53,18 +60,25 @@ router.get("/rss-news", async (req, res) => {
       for (const feedSource of section.feeds) {
         try {
           const feed = await parser.parseURL(feedSource.url);
-          const normalizedItems = (feed.items || []).slice(0, 5).map((item) => ({
-            title: item.title || "Untitled",
-            url: item.link || "",
-            summary:
-              item.contentSnippet ||
-              item.content ||
-              item.summary ||
-              "No summary available.",
-            platform: "RSS",
-            source_name: feedSource.name,
-            published_at: item.isoDate || item.pubDate || null,
-          }));
+
+          const normalizedItems = (feed.items || []).slice(0, 10).map((item) => ({
+              title: item.title || "Untitled",
+              url: item.link || "",
+              summary:
+                item.contentSnippet ||
+                item.content ||
+                item.summary ||
+                "No summary available.",
+              image_url:
+                item.enclosure?.url ||
+                item.mediaContent?.[0]?.$?.url ||
+                item.mediaThumbnail?.[0]?.$?.url ||
+                null,
+              platform: "RSS",
+              source_name: feedSource.name,
+              published_at: item.isoDate || item.pubDate || null,
+            }));
+
           allItems.push(...normalizedItems);
         } catch (err) {
           console.error(`Feed failed: ${feedSource.name}`, err.message);
@@ -88,7 +102,7 @@ router.get("/rss-news", async (req, res) => {
       });
       sections.push({
         title: section.title,
-        items: uniqueItems.slice(0, 5),
+        items: uniqueItems.slice(0, 10),
       });
     }
     res.json({

@@ -539,5 +539,43 @@ Now we add:
 frontend/src/App.jsx
 Inside your feed view, add this above your FeedSection:
 <h2 style={{ marginBottom: "12px" }}>General Feed</h2>
+git add .
+git commit -m "Refine feed controls layout and add general feed heading"
 <!-- 🚀 Phase 23.1 — Add Feed Mode Switcher -->
-
+Good choice. This is the clean product version.
+Goal
+Inside the Feed view, let users switch between:
+	•	All Feeds
+	•	General Feed
+	•	External News
+Behavior
+	•	All Feeds → show both RSS + RelayFlow feed
+	•	General Feed → show only RelayFlow feed
+	•	External News → show only RSS feed
+Step 1 — Add feedMode state
+📁 File
+frontend/src/App.jsx
+Add this near your other UI state:
+const [feedMode, setFeedMode] = useState("all");
+Step 2 — Create FeedModeBar.jsx
+📁 File
+frontend/src/components/FeedModeBar.jsx
+Create this file and add:
+Step 3 — Import it
+📁 File
+frontend/src/App.jsx
+Add: import FeedModeBar from "./components/FeedModeBar";
+Step 4 — Render FeedModeBar inside Feed view
+📁 File
+frontend/src/App.jsx
+Inside: {activeView === "feed" && ( <>
+Step 5 — Conditionally render RSS and General Feed
+📁 File
+frontend/src/App.jsx
+Right now you probably always show both:
+Step 6 — Test it
+🚀 Phase 25.2 — Add Images to External News When Available
+What we’ll do
+	1.	improve RSS parser to look for more image fields
+	2.	keep image_url in normalized RSS items
+	3.	render image in RssNewsSection.jsx when it exists

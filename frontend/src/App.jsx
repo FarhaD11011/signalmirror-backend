@@ -4,11 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import BookmarksPanel from "./components/BookmarksPanel";
 import PendingSourcesPanel from "./components/PendingSourcesPanel";
-
 import SourceForm from "./components/SourceForm";
 import CategoryFilter from "./components/CategoryFilter";
 import MessageBanner from "./components/MessageBanner";
-
 import FeedSection from "./components/FeedSection";
 import PageContainer from "./components/PageContainer";
 import AppHeader from "./components/AppHeader";
@@ -17,7 +15,7 @@ import SortBar from "./components/SortBar";
 import PaginationControls from "./components/PaginationControls";
 import RssNewsSection from "./components/RssNewsSection";
 import NavBar from "./components/NavBar";
-
+import FeedModeBar from "./components/FeedModeBar";
 
 
 function App() {
@@ -37,20 +35,20 @@ function App() {
   const [sortBy, setSortBy] = useState("newest");
   const [bookmarks, setBookmarks] = useState([]);
   const [pendingSources, setPendingSources] = useState([]);
+
   // ✅ frontend-pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalSources, setTotalSources] = useState(0);
   const [pageLimit] = useState(5);
-  // const feedTopRef = useRef(null);
-
-
+  
   // ✅ ui state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSubmittingSource, setIsSubmittingSource] = useState(false);
   const [isPageChanging, setIsPageChanging] = useState(false);
   const [activeView, setActiveView] = useState("feed");
+  const [feedMode, setFeedMode] = useState("all");
 
   // ✅ source submission form state
   const [sourceTitle, setSourceTitle] = useState("");
@@ -644,7 +642,6 @@ async function handleSubmitSource(e) {
       )}
           {activeView === "feed" && (
             <>
-          
             <div
             style={{
               display: "flex",
@@ -667,13 +664,22 @@ async function handleSubmitSource(e) {
             sortBy={sortBy}
             setSortBy={setSortBy}
           />
-          </div>
+        </div>
+          <FeedModeBar
+            feedMode={feedMode}
+            setFeedMode={setFeedMode}
+          />
+          {(feedMode === "all" || feedMode === "external") && (
           <RssNewsSection
             rssSources={rssSources}
             rssLoading={rssLoading}
             rssError={rssError}
-          />
+            />
+          )}
+          {(feedMode === "all" || feedMode === "general") && (
+            <> 
           <h2 style={{ marginBottom: "12px" }}>General Feed</h2>
+
           <FeedSection
             loading={loading}
             error={error}
@@ -693,8 +699,10 @@ async function handleSubmitSource(e) {
             onNext={handleNextPage}
             isPageChanging={isPageChanging}
             />
-          </>
-        )}
+           </>
+            )}
+       </>
+      )}
     </PageContainer>
   );
 }
