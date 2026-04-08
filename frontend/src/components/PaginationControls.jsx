@@ -33,7 +33,7 @@ function PaginationControls({
           color: "white",
         }}
       >
-        {isPageChanging ? "Loading..." : "Previous"}
+        Previous
       </button>
 
       <span>
@@ -53,7 +53,7 @@ function PaginationControls({
           color: "white",
         }}
       >
-        {isPageChanging ? "Loading..." : "Next"}
+       Next
       </button>
 
       <span>Total sources: {totalSources}</span>

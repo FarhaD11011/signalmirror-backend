@@ -1,14 +1,14 @@
 
 import { API_BASE_URL } from "./config";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoginForm from "./components/LoginForm";
 import BookmarksPanel from "./components/BookmarksPanel";
 import PendingSourcesPanel from "./components/PendingSourcesPanel";
-import SourceList from "./components/SourceList";
+
 import SourceForm from "./components/SourceForm";
 import CategoryFilter from "./components/CategoryFilter";
 import MessageBanner from "./components/MessageBanner";
-import UserStatusBar from "./components/UserStatusBar";
+
 import FeedSection from "./components/FeedSection";
 import PageContainer from "./components/PageContainer";
 import AppHeader from "./components/AppHeader";
@@ -16,6 +16,7 @@ import SearchBar from "./components/SearchBar";
 import SortBar from "./components/SortBar";
 import PaginationControls from "./components/PaginationControls";
 import RssNewsSection from "./components/RssNewsSection";
+import NavBar from "./components/NavBar";
 
 
 
@@ -41,6 +42,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalSources, setTotalSources] = useState(0);
   const [pageLimit] = useState(5);
+  // const feedTopRef = useRef(null);
 
 
   // ✅ ui state
@@ -48,6 +50,7 @@ function App() {
   const [error, setError] = useState("");
   const [isSubmittingSource, setIsSubmittingSource] = useState(false);
   const [isPageChanging, setIsPageChanging] = useState(false);
+  const [activeView, setActiveView] = useState("feed");
 
   // ✅ source submission form state
   const [sourceTitle, setSourceTitle] = useState("");
@@ -233,6 +236,15 @@ async function fetchSources(showLoader = true) {
   fetchRssSources();
   }, []);
 
+//   useEffect(() => {
+//   if (currentPage > 1 && feedTopRef.current) {
+//     feedTopRef.current.scrollIntoView({
+//       behavior: "smooth",
+//       block: "start",
+//     });
+//   }
+// }, [currentPage]);
+
   async function handleSignup(e) {
   e.preventDefault();
   setSuccessMessage("");
@@ -269,6 +281,7 @@ async function fetchSources(showLoader = true) {
   async function handleLogin(e) {
     e.preventDefault();
     setSuccessMessage("");
+    setActiveView("feed");
     setActionError("");
     if (!email.trim() || !password.trim()) {
       setActionError("Please enter both email and password");
@@ -370,6 +383,7 @@ async function handleSubmitSource(e) {
       setPendingSources([]);
       setSuccessMessage("");
       setActionError("");
+      setActiveView("feed");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     }
@@ -572,22 +586,28 @@ async function handleSubmitSource(e) {
       <MessageBanner type="success" message={successMessage} />
       <MessageBanner type="error" message={actionError} />
       
-      {!user ? (
-        <LoginForm
-            email={email}
-            password={password}
-            setEmail={setEmail}
-            setPassword={setPassword}
-            handleLogin={handleLogin}
-            handleSignup={handleSignup}
-            authMode={authMode}
-            setAuthMode={setAuthMode}
-          />
-        ) : (
-          <UserStatusBar user={user} handleLogout={handleLogout} />
-      )}
-
       {user && (
+        <NavBar
+          user={user}
+          activeView={activeView}
+          setActiveView={setActiveView}
+          handleLogout={handleLogout}
+        />
+      )}
+      {!user && (
+        <LoginForm
+          email={email}
+          password={password}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+          handleSignup={handleSignup}
+          authMode={authMode}
+          setAuthMode={setAuthMode}
+        />
+    )}
+
+      {user && activeView === "submit" && (
         <SourceForm
           sourceTitle={sourceTitle}
           setSourceTitle={setSourceTitle}
@@ -607,14 +627,14 @@ async function handleSubmitSource(e) {
         />
       )}
 
-      {user && (
+      {user && activeView === "bookmarks" && (
           <BookmarksPanel
             bookmarks={bookmarks}
             handleRemoveBookmark={handleRemoveBookmark}
       />
       )}
 
-      {user?.role === "admin" && (
+      {user?.role === "admin" && activeView === "pending" && (
         <PendingSourcesPanel
           pendingSources={pendingSources}
           handleApproveSource={handleApproveSource}
@@ -622,7 +642,18 @@ async function handleSubmitSource(e) {
           processingSourceId={processingSourceId}
   />
       )}
-
+          {activeView === "feed" && (
+            <>
+          
+            <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+              flexWrap: "wrap",
+              marginBottom: "20px",
+              }}
+            >
           <CategoryFilter
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -636,11 +667,13 @@ async function handleSubmitSource(e) {
             sortBy={sortBy}
             setSortBy={setSortBy}
           />
+          </div>
           <RssNewsSection
             rssSources={rssSources}
             rssLoading={rssLoading}
             rssError={rssError}
           />
+          <h2 style={{ marginBottom: "12px" }}>General Feed</h2>
           <FeedSection
             loading={loading}
             error={error}
@@ -659,7 +692,9 @@ async function handleSubmitSource(e) {
             onPrevious={handlePreviousPage}
             onNext={handleNextPage}
             isPageChanging={isPageChanging}
-/>
+            />
+          </>
+        )}
     </PageContainer>
   );
 }

@@ -304,33 +304,240 @@ Step 1 — Install RSS parser
 backend/
 Run:
 npm install rss-parser
+Step 2 — Create RSS route
+📁 File
+backend/src/routes/externalRoutes.js
+Create this file and add:
+Step 3 — Register the route
+📁 File
+backend/server.js
+Add this import near your other route imports:
+const externalRoutes = require("./src/routes/externalRoutes");
+and add this too:  app.use("/api/external", externalRoutes);
+Step 4 — Test backend route first
+Restart backend, then open this on webpage:
+http://localhost:5001/api/external/rss-news
+Step 5 — Add frontend state
+📁 File
+frontend/src/App.jsx
+Add these state variables:
+const [rssSources, setRssSources] = useState([]);
+const [rssLoading, setRssLoading] = useState(true);
+const [rssError, setRssError] = useState("");
+Step 6 — Add RSS fetch function
+📁 File
+frontend/src/App.jsx
+Add this function near your other fetch functions:
+Step 7 — Load RSS on page open
+📁 File
+frontend/src/App.jsx
+Add this effect:
+useEffect(() => {
+  fetchRssSources();
+}, []);
+Step 8 — Create RSS section component
+📁 File
+frontend/src/components/RssNewsSection.jsx
+Create this file and add:
+Step 9 — Render RSS section
+📁 File
+frontend/src/App.jsx
+Import it:
+import RssNewsSection from "./components/RssNewsSection";Step 10 — Test end to end
+Expected
+	•	app loads as usual
+	•	new section appears: External News
+	•	RSS items show title, summary, source name, and link
+	•	no effect on your moderated RelayFlow feed
+<!-- Yes — now you’re thinking like a real product. -->
+👉 You should absolutely mix multiple outlets, not just BBC.
+And yes, you can do that with RSS — safely and freely.
+Good RSS sources (reliable + free)
+Here are solid RSS feeds you can use:
+🟦 General News
+	•	CNN → http://rss.cnn.com/rss/edition.rss
+	•	ABC News → https://abcnews.go.com/abcnews/topstories
+	•	CBS News → https://www.cbsnews.com/latest/rss/main
+🟩 International
+	•	Reuters → https://feeds.reuters.com/reuters/topNews
+	•	Al Jazeera → https://www.aljazeera.com/xml/rss/all.xml
+🟨 Tech / Business
+	•	TechCrunch → https://techcrunch.com/feed/
+	•	The Verge → https://www.theverge.com/rss/index.xml
+🟪 Keep BBC (still good)
+	•	BBC World
+	•	BBC Tech
+Updated RSS_FEEDS (use this)
+📁 File
+backend/src/routes/externalRoutes.js
+Replace your current feeds with this:
+<!-- commit it: -->
+git add .
+git commit -m "Add RSS aggregation with multiple sources, deduplication, and balanced feed"
+<!-- Yes — this is a great product improvement. -->
+Right now your feed is “flat”; grouping it makes it feel structured and professional.
+We’ll do this cleanly without breaking your current logic.
+<!-- 🚀 What we’ll change -->
+Instead of returning:
+sources: [...]
+We’ll return:
+sections: [
+  { title: "General", items: [...] },
+  { title: "International", items: [...] },
+  ...
+]
+STEP 1 — Update backend structure
+📁 File
+backend/src/routes/externalRoutes.js
+Replace your RSS_FEEDS with grouped feeds
+Replace your route logic with this
+STEP 2 — Update frontend state usage
+📁 File
+App.jsx
+Change:
+STEP 3 — Update RssNewsSection
+📁 File
+RssNewsSection.jsx
+Replace the map logic with:
+🚀 Result
+Now your UI will look like:
+External News
+🟦 General
+- CNN article
+- ABC article
+🟩 International
+- Reuters article
+🟨 Tech
+- TechCrunch article
+🟪 BBC
+- BBC article
+🔥 This is a BIG upgrade
+You just turned:
+👉 raw feed
+into:
+👉 structured media platform UI
+<!-- 🚀 After this -->
+<!-- Commit it: -->
+git add .
+git commit -m "Group RSS news into categorized sections with structured UI"
+<!-- If you only want to change the Message -->
+If the code is correct but you made a typo in the commit message:
+git commit --amend -m "The new and correct commit message"
+<!-- 🚀 Phase 23.0 — Add Navbar and Section Switching -->
+Good. This is the right pre-deployment UI phase.
+We’ll do the safe version:
+	•	no router yet
+	•	one activeView state
+	•	navbar switches sections
+	•	much cleaner product feel
+Step 1 — Add activeView state
+📁 File
+frontend/src/App.jsx
+Add this near your other UI state:
+const [activeView, setActiveView] = useState("feed");
+Step 2 — Create NavBar.jsx
+📁 File
+frontend/src/components/NavBar.jsx
+Create this file and add:
+Step 3 — Import NavBar
+📁 File
+frontend/src/App.jsx
+Add this import:
+import NavBar from "./components/NavBar";
+Step 4 — Render navbar in App.jsx
+📁 File
+frontend/src/App.jsx
+{user && (
+  <NavBar
+    user={user}
+    activeView={activeView}
+    setActiveView={setActiveView}
+    handleLogout={handleLogout}
+  />
+)}
+Step 5 — Show only one main section at a time
+📁 File
+frontend/src/App.jsx
+Submit view:
+{user && activeView === "submit" && (
+  <SourceForm
+    sourceTitle={sourceTitle}
+    setSourceTitle={setSourceTitle}
+    sourceUrl={sourceUrl}
+    ....
+Bookmarks view:
+Pending view:
+Feed view:
 
+Step 6 — Remove old always-visible stacked sections
+📁 File
+frontend/src/App.jsx
+Delete or replace the old always-rendered versions of:
+	•	SourceForm
+	•	BookmarksPanel
+	•	PendingSourcesPanel
+	•	category/search/sort/feed block
+because they are now handled by activeView.
+Step 7 — Reset to feed on logout
+📁 File
+frontend/src/App.jsx
+In handleLogout(), add:
+setActiveView("feed");
+Step 8 — Optional: set default user landing view
+So in handleLogin(), after success, add:
+setActiveView("feed");
+Step 9 — Test
 
-rssSources.map((section, idx) => (
-  <div key={idx} style={{ marginBottom: "20px" }}>
-    <h3 style={{ borderBottom: "2px solid #eee", paddingBottom: "4px" }}>
-      {section.title}
-    </h3>
+<!-- Fix 1 — Remove the forced scroll-to-top on pagination -->
+📁 File
+frontend/src/App.jsx
+Find and delete this whole effect:
+Also remove this if you added it:
+And remove useRef from:
+And remove this line from the feed view if you added it:
+<div ref={feedTopRef}></div>
+<!-- Fix 2 — Stop the pagination buttons from visually jumping -->
+Right now the button text likely changes from:
+	•	Previous → Loading...
+	•	Next → Loading...
+That changes button width and makes the section feel jumpy.
+📁 File
+frontend/src/components/PaginationControls.jsx
+Keep the button labels fixed
+Replace this:
+{isPageChanging ? "Loading..." : "Previous"}
+to this: previous
+<!-- 1) Put Category + Search + Sort in ONE LINE -->
+Instead of stacking them, we’ll wrap all 3 components inside a flex container.
+📁 File
+frontend/src/App.jsx
+Find this part inside your feed view:
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    flexWrap: "wrap",
+    marginBottom: "20px",
+  }}
+>
+  <CategoryFilter
 
-    {section.items.map((item, index) => (
-      <div
-        key={`${item.url}-${index}`}
-        style={{
-          padding: "10px 0",
-          borderBottom: "1px solid #eee",
-        }}
-      >
-        <strong>{item.title}</strong>
-        <p style={{ margin: "6px 0" }}>{item.summary}</p>
+2) Make each control inline-friendly
+📁 CategoryFilter.jsx
+Replace with:
+📁 SearchBar.jsx
+Replace with:
+📁 SortBar.jsx
+Replace with:
+3) Add “General Feed” title
+You already have:
+👉 External News
+Now we add:
+👉 General Feed
+📁 File
+frontend/src/App.jsx
+Inside your feed view, add this above your FeedSection:
+<h2 style={{ marginBottom: "12px" }}>General Feed</h2>
+<!-- 🚀 Phase 23.1 — Add Feed Mode Switcher -->
 
-        <div style={{ fontSize: "13px", color: "#666" }}>
-          {item.source_name}
-        </div>
-
-        <a href={item.url} target="_blank" rel="noreferrer">
-          Visit Source
-        </a>
-      </div>
-    ))}
-  </div>
-))
