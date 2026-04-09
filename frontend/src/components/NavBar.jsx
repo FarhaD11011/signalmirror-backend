@@ -38,7 +38,7 @@ function NavBar({ user, activeView, setActiveView, handleLogout }) {
       }}
     >
       <div>
-        {navButton("Feed", "feed")}
+        {navButton("Home", "feed")}
 
         {user && navButton("Submit Source", "submit")}
 

@@ -8,6 +8,8 @@ function SourceForm({
     setSourceSummary,
     sourceImageUrl,
     setSourceImageUrl,
+    sourceVideoUrl,
+    setSourceVideoUrl,
     sourcePlatform,
     setSourcePlatform,
     sourceCategoryId,
@@ -69,6 +71,17 @@ function SourceForm({
             placeholder="Image URL (optional)"
             value={sourceImageUrl}
             onChange={(e) => setSourceImageUrl(e.target.value)}
+            disabled={isSubmittingSource}
+            style={{ width: "100%", padding: "8px" }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+          <input
+            type="text"
+            placeholder="Video URL (YouTube, etc)"
+            value={sourceVideoUrl}
+            onChange={(e) => setSourceVideoUrl(e.target.value)}
             disabled={isSubmittingSource}
             style={{ width: "100%", padding: "8px" }}
           />

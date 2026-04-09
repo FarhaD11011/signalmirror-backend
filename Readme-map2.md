@@ -574,8 +574,85 @@ Step 5 — Conditionally render RSS and General Feed
 frontend/src/App.jsx
 Right now you probably always show both:
 Step 6 — Test it
-🚀 Phase 25.2 — Add Images to External News When Available
+<!-- 🚀 Phase 25.2 — Add Images to External News When Available -->
 What we’ll do
 	1.	improve RSS parser to look for more image fields
 	2.	keep image_url in normalized RSS items
 	3.	render image in RssNewsSection.jsx when it exists
+Step 1 — Improve RSS parser
+📁 File
+backend/src/routes/externalRoutes.js
+Change this line: const parser = new Parser();
+Step 2 — Improve image_url extraction
+📁 File
+backend/src/routes/externalRoutes.js
+Inside your normalized item object, replace:
+Step 3 — Render image in frontend
+📁 File
+frontend/src/components/RssNewsSection.jsx
+Inside each item card, add this before the title:
+Restart backend
+Because the RSS route changed:
+npm run dev
+<!-- commit it -->
+git add .
+git commit -m "Add RSS news images when available and improve external news cards"
+
+<!-- 🚀 Next phase: Phase 24.4 — Deployment Setup -->
+The deployment phase will usually be:
+
+24.4.1 — Choose hosting stack
+24.4.2 — Prepare backend for hosting
+24.4.3 — Prepare frontend for hosting
+24.4.4 — Deploy backend
+24.4.5 — Deploy frontend
+24.4.6 — Live walkthrough
+<!-- 🚀 What we’ll do next (Deployment Plan) -->
+Step 1 — Create hosted database (Neon)
+Replace your local Postgres with a cloud one
+Step 2 — Update backend env
+Use Neon connection string
+Step 3 — Deploy backend (Render)
+Make your API live
+Step 4 — Deploy frontend (Vercel)
+Connect UI to backend
+
+<!-- Phase 24.4.1 — Create Neon database -->
+Go to:
+👉 https://neon.tech
+Steps:
+	1.	Sign up (GitHub easiest)
+	2.	Create project
+	3.	Create database (default is fine)
+After creation, Neon gives you:
+A connection string like:
+postgresql://user:password@host/dbname?sslmode=require
+
+ Important — convert it to your env format
+Neon gives ONE string, but your app uses separate fields.
+You’ll extract:
+DB_USER=xxxx
+DB_PASSWORD=xxxx
+DB_HOST=xxxx
+DB_NAME=xxxx
+DB_PORT=5432
+ Step 2 — Create .env for production (later)
+Example:
+DB_USER=neondb_owner
+DB_PASSWORD=xxxxx
+DB_HOST=ep-xxx.us-east-1.aws.neon.tech
+DB_NAME=neondb
+DB_PORT=5432
+JWT_SECRET=your_secret
+<!-- 🚀 Phase 23.2 — Polish General Feed Cards -->
+<!-- Step 1 — Update SourceList.jsx card layout safely -->
+
+
+
+
+
+
+
+
+git add .
+git commit -m "Add video URL support for sources with YouTube embed rendering"

@@ -59,6 +59,7 @@ function App() {
   const [sourceCategoryId, setSourceCategoryId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [processingSourceId, setProcessingSourceId] = useState(null);
+  const [sourceVideoUrl, setSourceVideoUrl] = useState("");
 
   // ✅ ....
   const [rssSources, setRssSources] = useState([]);
@@ -342,11 +343,12 @@ async function handleSubmitSource(e) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
+        body: JSON.stringify({
         title: sourceTitle.trim(),
         url: sourceUrl.trim(),
         summary: sourceSummary.trim() || null,
         image_url: sourceImageUrl.trim() || null,
+        video_url: sourceVideoUrl.trim() || null,
         platform: sourcePlatform.trim() || null,
         category_id: sourceCategoryId ? Number(sourceCategoryId) : null,
         submitter_id: user.id,
@@ -363,6 +365,8 @@ async function handleSubmitSource(e) {
     setSourceImageUrl("");
     setSourcePlatform("");
     setSourceCategoryId("");
+    setSourceVideoUrl("");
+
     if (user.role === "admin") {
       await fetchPendingSources();
     }
@@ -615,6 +619,8 @@ async function handleSubmitSource(e) {
           setSourceSummary={setSourceSummary}
           sourceImageUrl={sourceImageUrl}
           setSourceImageUrl={setSourceImageUrl}
+          sourceVideoUrl={sourceVideoUrl}
+          setSourceVideoUrl={setSourceVideoUrl}
           sourcePlatform={sourcePlatform}
           setSourcePlatform={setSourcePlatform}
           sourceCategoryId={sourceCategoryId}

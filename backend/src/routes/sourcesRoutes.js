@@ -141,6 +141,7 @@ router.post("/", async (req, res) => {
       url,
       summary,
       image_url,
+      video_url,
       platform,
       category_id,
       submitter_id,
@@ -186,11 +187,11 @@ router.post("/", async (req, res) => {
     const result = await pool.query(
       `
       INSERT INTO sources
-      (title, url, summary, image_url, platform, category_id, submitter_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      (title, url, summary, image_url, video_url, platform, category_id, submitter_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
       `,
-      [title, url, summary || null, image_url || null, platform || null, category_id || null, submitter_id]
+      [title, url, summary || null, image_url || null, video_url || null, platform || null, category_id || null, submitter_id]
     );
     res.status(201).json({
       success: true,
