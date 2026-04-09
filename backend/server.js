@@ -26,7 +26,7 @@ app.use(
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("RelayFlow API is running...");
+  res.send("SignalMirror API is running...");
 });
 
 app.get("/db-test", async (req, res) => {

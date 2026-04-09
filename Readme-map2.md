@@ -646,13 +646,146 @@ DB_PORT=5432
 JWT_SECRET=your_secret
 <!-- 🚀 Phase 23.2 — Polish General Feed Cards -->
 <!-- Step 1 — Update SourceList.jsx card layout safely -->
+📁 File
+frontend/src/components/SourceList.jsx
+Replace the whole file with this:
+✅ What this improves
+You’ll get:
+	•	cleaner card shadow and border
+	•	optional top image if available
+	•	stronger title
+	•	softer summary text
+	•	clearer separation between content and metadata/actions
+	•	nicer bottom row for platform + votes
+<!-- Fix it properly (real product layout) -->
+We’ll convert each card into a 3-zone layout:
+🔹 Zone 1 — Content
+	•	Title
+	•	Summary
+🔹 Zone 2 — Actions
+	•	Visit Source
+	•	Bookmark
+🔹 Zone 3 — Footer
+	•	Platform
+	•	Votes + Score (right aligned)
+Updated layout (drop-in fix)
+📁 SourceList.jsx
+Replace ONLY the card <div> style + structure with this:
+Center the whole page content
+Your cards are narrow now, but the page content is still hugging the left side.
+📁 frontend/src/components/PageContainer.jsx
+Replace it with:
+function PageContainer({ children }) {
+  return (
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "960px",
+        margin: "0 auto",
+      }} >
+      {children}
+    </div>
+  );
+}
+export default PageContainer;
+<!--🚀🚀 Phase 23.3 — Add Video URL Support -->
+Yes — here is the clean implementation path.
+We’ll support:
+	•	video_url in DB
+	•	backend save/read
+	•	frontend submit field
+	•	frontend render for YouTube videos
+-Step 1 — Database change
+In PostgreSQL, run:
+ALTER TABLE sources
+ADD COLUMN video_url TEXT;
+check it:
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'sources';
+-Step 2 — Update backend source submission route
+📁 File
+backend/src/routes/sourcesRoutes.js
+Find your POST /api/sources route.
+In this destructuring:
+Change from:
+In your INSERT query, change from:
+-Step 3 — Add frontend state
+📁 File
+frontend/src/App.jsx
+Add this near your other source form state:
+const [sourceVideoUrl, setSourceVideoUrl] = useState("");
+-Step 4 — Update submit handler
+📁 File
+frontend/src/App.jsx
+Inside handleSubmitSource, add video_url.
+Also reset it after successful submit
+setSourceVideoUrl("");
+-Step 5 — Pass new prop into SourceForm
+📁 File
+frontend/src/App.jsx
+In your SourceForm render, add:
+sourceVideoUrl={sourceVideoUrl}
+setSourceVideoUrl={setSourceVideoUrl}
+-Step 6 — Update SourceForm.jsx
+📁 File
+frontend/src/components/SourceForm.jsx
+Update function signature
+-Add a new input for video URL
+Place this below image URL input:
+Step 7 — Render video in SourceList.jsx
+📁 File
+frontend/src/components/SourceList.jsx
+Add this helper near the top of the component, before return:
+Then inside each card, above image/title, add:
+const embedUrl = getYouTubeEmbedUrl(source.video_url);
+Then render video above image/title:
+Step 8 — Test
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+https://youtu.be/dQw4w9WgXcQ
+<!-- Commit after it works -->
+git add .
+git commit -m "Add video URL support for sources with YouTube embed rendering"
 
+<!-- ✅ What you just achieved -->
+You now have a full media pipeline:
+✔ Submit
+	•	User submits video URL
+✔ Backend
+	•	Stores video_url correctly
+✔ Moderation
+	•	Appears in Pending
+	•	Admin approves
+✔ Feed rendering
+	•	Video embeds properly
+	•	Layout still clean
+	•	No UI break
+🎯 Why this is a big deal
 
+Your app now supports:
+	•	📝 Text content
+	•	🖼 Image content
+	•	🎥 Video content
+	•	📰 External news (RSS)
+	•	👍 Voting system
+	•	🔖 Bookmarks
+	•	🛡 Admin moderation
+👉 This is full-stack + product-level functionality
+This is exactly what interviewers look for:
+“Can this person build a real content platform?”
+Answer: yes — you just did
+🚀 Where you are now
 
-
-
-
+You have completed:
+	•	Phase 15 → Search
+	•	Phase 17 → Sorting
+	•	Phase 21 → Admin UX
+	•	Phase 22 → Pagination
+	•	Phase 23 → UI + Navbar + Feed Modes
+	•	Phase 25 → RSS aggregation
+	•	Phase 23.3 → Media support (video)
+👉 This is beyond MVP already.
 
 
 git add .
-git commit -m "Add video URL support for sources with YouTube embed rendering"
+git commit -m "Rename app branding from RelayFlow to SignalMirror"

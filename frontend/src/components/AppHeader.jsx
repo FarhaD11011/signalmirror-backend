@@ -1,5 +1,5 @@
 function AppHeader() {
-  return <h1>RelayFlow</h1>;
+  return <h1>SignalMirror</h1>;
 }
 
 export default AppHeader;
