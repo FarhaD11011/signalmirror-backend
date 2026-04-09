@@ -1,7 +1,7 @@
 
-2026-RelayFlow
+2026-SignalMirror
 Track, review, and relay source-linked content.
-RelayFlow = platform relays outside source-linked content
+SignalMirror = platform relays outside source-linked content
 <!-- 
 Phase 0 — Git-first foundation -->
 
@@ -1010,7 +1010,7 @@ So the API becomes cleaner for frontend use.
 git add .
 git commit -m "Convert vote aggregation fields to numbers in sources feed"
 👉Where you are now
-RelayFlow backend now has:
+SignalMirror backend now has:
 	•	authentication
 	•	authorization
 	•	moderation
@@ -1020,7 +1020,7 @@ RelayFlow backend now has:
 	•	vote counts in feed
 That is a real backend MVP.
 
-<!-- 🚀🚀Phase 11.1 — Initialize React frontend for RelayFlow -->
+<!-- 🚀🚀Phase 11.1 — Initialize React frontend for SignalMirror -->
 <!-- Step 1 — Go into the project and frontend folder -->
 <!-- Step 2 — Create the React app with Vite -->
 When it asks questions, choose:
@@ -1035,7 +1035,7 @@ You should see something like:
 Local: http://localhost:5173/
 <!-- Step 5 — Make first frontend commit -->
 git add .
-git commit -m "Initialize RelayFlow frontend with React and Vite"
+git commit -m "Initialize SignalMirror frontend with React and Vite"
 <!-- Step 6 — Clean the starter files -->
 cd frontend
 Open src/App.jsx and replace everything with: code 
@@ -1046,7 +1046,7 @@ npm run dev
 <!-- Step 8 — Commit cleanup -->
 cd ..
 git add .
-git commit -m "Clean Vite starter files for RelayFlow frontend"
+git commit -m "Clean Vite starter files for SignalMirror frontend"
 <!-- Phase 11.2 — Fetch and render the public feed -->
 Goal:
 	•	call GET /api/sources
@@ -1086,7 +1086,7 @@ git add .
 git commit -m "Enable CORS for frontend-backend connection"
 git log --oneline -5
 <!-- Where you are now -->
-RelayFlow now has:
+SignalMirror now has:
 Backend
 	•	auth (signup/login/JWT)
 	•	moderation (approve/reject)
@@ -1101,7 +1101,7 @@ Frontend
 👉 This is no longer setup — this is a working product foundation.
 Where you are now
 
-RelayFlow now has:
+SignalMirror now has:
 
 Backend
 	•	auth (signup/login/JWT)
@@ -1384,7 +1384,7 @@ Now we want the admin side to become visible in the frontend so an admin can:
 	•	approve them
 	•	reject or delete them later
 	•	manage the flow like a real moderation product
-This is one of the most important RelayFlow features.
+This is one of the most important SignalMirror features.
 <!-- Step 1 — Add pending sources state -->
 At the top of App.jsx, add:
 Step 2 — Add fetchPendingSources()
@@ -1453,7 +1453,7 @@ This is actually a good pattern. It is more scalable than a simple boolean becau
 	•	user
 	•	moderator
 	•	admin
-So for RelayFlow, role is the correct field to use.
+So for SignalMirror, role is the correct field to use.
 What changed:
 	•	admin login is recognized correctly through role: "admin"
 	•	Pending Sources section now renders
@@ -1491,7 +1491,7 @@ grep -R "pending" .
 grep -R "approve" .
 grep -R "admin" .
 
-<!-- relayflow=#  -->
+<!-- SignalMirror=#  -->
 INSERT INTO sources (
   url,
   title,
@@ -1516,7 +1516,7 @@ SELECT id, title, status FROM sources ORDER BY id DESC LIMIT 5;
   2 | Ocean News Example  | rejected
   1 | Ocean News Example  | approved
 (3 rows)
-relayflow=# SELECT id, title, status
+SignalMirror=# SELECT id, title, status
 FROM sources
 ORDER BY id;
  id |        title        |  status  
@@ -1548,7 +1548,7 @@ What the structure should look like in your component
 Inside function App() { ... }, it should be like this order:
 <!-- After fixing -->
 Reset source 3 back to pending again if needed:
-<!-- relayflow=# : -->
+<!-- SignalMirror=# : -->
 UPDATE sources
 SET status = 'pending'
 WHERE id = 3;
@@ -1567,7 +1567,7 @@ What your result confirms:
 	•	source appears in the public approved feed
 	•	public feed refresh works immediately
 That means Phase 12.0 is fully complete.
-Your RelayFlow moderation loop now works end to end:
+Your SignalMirror moderation loop now works end to end:
 	•	source exists as pending
 	•	admin sees it
 	•	admin approves it
@@ -1594,7 +1594,7 @@ Replace this:
 <!-- Step 3 — Test it -->
 Since your pending source is now approved, create or reset one pending source again.
 Use SQL:
-relayflow=#
+SignalMirror=#
 UPDATE sources
 SET status = 'pending'
 WHERE id = 3;

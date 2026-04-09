@@ -1,6 +1,6 @@
-# RelayFlow
+# SignalMirror
 
-RelayFlow is a full-stack app for submitting and reviewing content through a moderation workflow.
+SignalMirror is a full-stack app for submitting and reviewing content through a moderation workflow.
 
 ## Project Structure
 

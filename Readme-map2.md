@@ -1,5 +1,12 @@
 
-RelayFlow:
+SignalMirror:
+
+postgresql://neondb_owner:npg_X1hWHFgbUil6@ep-autumn-glade-anakzcak.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+
+
+
+
 
 🚀 Next Phase
 🚀 Phase 21.0 — Admin Moderation Improvements
@@ -348,7 +355,7 @@ Expected
 	•	app loads as usual
 	•	new section appears: External News
 	•	RSS items show title, summary, source name, and link
-	•	no effect on your moderated RelayFlow feed
+	•	no effect on your moderated SignalMirror feed
 <!-- Yes — now you’re thinking like a real product. -->
 👉 You should absolutely mix multiple outlets, not just BBC.
 And yes, you can do that with RSS — safely and freely.
@@ -549,8 +556,8 @@ Inside the Feed view, let users switch between:
 	•	General Feed
 	•	External News
 Behavior
-	•	All Feeds → show both RSS + RelayFlow feed
-	•	General Feed → show only RelayFlow feed
+	•	All Feeds → show both RSS + SignalMirror feed
+	•	General Feed → show only SignalMirror feed
 	•	External News → show only RSS feed
 Step 1 — Add feedMode state
 📁 File
@@ -788,4 +795,4 @@ You have completed:
 
 
 git add .
-git commit -m "Rename app branding from RelayFlow to SignalMirror"
+git commit -m "Rename app branding from SignalMirror to SignalMirror"

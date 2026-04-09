@@ -27,7 +27,7 @@ const RSS_FEEDS = [
   {
     title: "🟩International",
     feeds: [
-      { name: "Reuters", url: "https://feeds.reuters.com/reuters/topNews" },
+      // { name: "Reuters", url: "https://feeds.reuters.com/reuters/topNews" },
       { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
     ],
   },

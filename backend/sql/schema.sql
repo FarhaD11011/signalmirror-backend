@@ -19,6 +19,7 @@ CREATE TABLE sources (
   url TEXT NOT NULL,
   summary TEXT,
   image_url TEXT,
+  video_url TEXT,
   platform VARCHAR(50),
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
