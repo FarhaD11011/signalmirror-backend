@@ -8,5 +8,5 @@ const pool = new Pool({
     rejectUnauthorized: false, // ✅ required for Neon
   },
 });
-console.log("Connected to DB:", process.env.DATABASE_URL);
+
 module.exports = pool;
