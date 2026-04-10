@@ -13,3 +13,4 @@ yarn-error.log*
 .vscode/
 backend/.env
 frontend/.env
+Readme-map2.md
