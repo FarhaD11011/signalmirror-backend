@@ -924,3 +924,113 @@ Wait ~1–2 minutes.
 <!-- 🚀🚀🚀🧪 Step 6 — Test backend -->
 After deploy, Render gives you a URL like:
 https://signalmirror-backend.onrender.com
+Expected: SignalMirror API is running...
+Test 2: /db-test
+Expected:  JSON success
+<!-- Urgent first: rotate the leaked database secret -->
+GitGuardian is right. Your Neon connection string was exposed in GitHub history.
+<!-- Step 1 — rotate the Neon password now -->
+In Neon:
+	•	open your project
+	•	go to connection settings / credentials
+	•	reset or rotate the database password
+Do that first.
+When done, tell me:
+password rotated
+Now do this:
+Option A (most common)
+Click:
+👉 “Reset password” or “Generate new password”
+Option B
+If no button:
+	•	find the password field
+	•	manually change it
+⸻
+After you reset it
+You will get a NEW connection string like:
+postgresql://neondb_owner:NEW_PASSWORD@...
+<!-- Step 2 — Update Render -->
+After you rotate password:
+Go to:
+👉 Render → your backend service → Environment
+Update:
+DATABASE_URL = (new Neon connection string)
+👉 Click Save → Redeploy
+git add .
+git commit -m "update database url"
+git push
+git add .
+git commit -m "fix database connection"
+git push
+<!-- What is now confirmed -->
+	•	Render backend is live ✅
+	•	Render backend can connect to Neon ✅
+	•	Environment variables are set correctly ✅
+So now the next step is:
+Step 1 — Test the real backend API
+Open these in browser:
+https://signalmirror-backend.onrender.com/api/sources
+and:
+https://signalmirror-backend.onrender.com/api/categories
+expected
+	•	/api/sources returns JSON
+	•	/api/categories returns JSON
+<!-- Step 2 — If /api/sources works, deploy frontend on Vercel -->
+After backend API works, we move to frontend deployment.
+In your frontend project, make sure .env or .env.production has:
+VITE_API_BASE_URL=https://signalmirror-backend.onrender.com
+Step 3 — Push the frontend config change
+git add .
+git commit -m "Point frontend to deployed backend"
+git push
+<!-- 🔧 Step 3 — Deploy on Vercel -->
+Go to:
+👉 https://vercel.com
+Import project:
+	•	Select your repo
+	•	IMPORTANT:
+Setting                    Value
+Framework:                 Vite
+Root Directory:            frontend
+Build Command:             npm run build
+Output Directory:          dist
+🔧 Step 4 — Add env variable in Vercel
+Inside Vercel project:
+Add:
+VITE_API_BASE_URL = https://signalmirror-backend.onrender.com
+
+<!-- Best fix: deploy only the frontend -->
+Step 1 — change Application Preset
+In that Vercel setup page, find:
+Application Preset
+Services
+change it to : vite
+Step 2 — set Root Directory to frontend
+After changing the preset, set:
+Root Directory = frontend
+
+Right now your “Environment Variables” section is wrong.
+You added things like:
+	•	Framework
+	•	Root Directory
+	•	Build Command
+	•	Output Directory
+Those are settings, not environment variables.
+Delete those entries.
+Then add only this one environment variable:
+VITE_API_BASE_URL = https://signalmirror-backend.onrender.com
+<!-- 🔧 Step 5 — Deploy -->
+Click deploy
+<!-- 🔧 Step 6 — Fix CORS (VERY IMPORTANT) -->
+After Vercel gives URL like:
+https://signalmirror-frontend.vercel.app
+Go back to Render → Environment
+Update:
+FRONTEND_URL=https://your-vercel-url.vercel.app
+Then:
+👉 Redeploy backend again
+<!-- 🎯 After this -->
+You will have:
+	•	Live backend (Render) ✅
+	•	Live frontend (Vercel) ✅
+	•	Full stack connected ✅
