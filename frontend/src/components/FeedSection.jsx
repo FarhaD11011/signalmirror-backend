@@ -7,6 +7,7 @@ function FeedSection({
   isBookmarked,
   handleBookmark,
   handleVote,
+  handleShare,   // ✅ ADD THIS
   user,
   setActionError,
   setSuccessMessage,

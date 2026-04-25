@@ -1,9 +1,10 @@
+
   function SourceList({
   sources,
   isBookmarked,
   handleBookmark,
   handleVote,
-  handleShare,   // ✅ ADD THIS
+  handleShare = () => {},   // ✅ SAFE DEFAULT
   user,
   setActionError,
   setSuccessMessage,
