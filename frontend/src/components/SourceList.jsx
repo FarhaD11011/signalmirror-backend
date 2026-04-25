@@ -3,6 +3,7 @@
   isBookmarked,
   handleBookmark,
   handleVote,
+  handleShare,   // ✅ ADD THIS
   user,
   setActionError,
   setSuccessMessage,
@@ -65,6 +66,9 @@
                 )}
               {/* 🔹 Title */}
               <h2 style={{ marginBottom: "8px" }}>{source.title}</h2>
+              <button onClick={() => handleShare(source)}>
+                Share
+              </button>
 
               {/* 🔹 Summary */}
               <p style={{ marginBottom: "12px", color: "#555" }}>

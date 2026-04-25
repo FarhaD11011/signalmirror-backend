@@ -377,6 +377,23 @@ async function handleSubmitSource(e) {
   }
 }
 
+ function handleShare(source) {
+  const shareData = {
+    title: source.title,
+    text: source.summary || "",
+    url: source.url,
+  };
+  if (navigator.share) {
+    navigator.share(shareData)
+      .then(() => console.log("Shared successfully"))
+      .catch((err) => console.log("Share failed", err));
+  } else {
+    // fallback: copy to clipboard
+    navigator.clipboard.writeText(source.url);
+    alert("Link copied to clipboard!");
+  }
+}
+
     // ✅ logout handler
     function handleLogout() {
       setUser(null);
@@ -693,6 +710,7 @@ async function handleSubmitSource(e) {
             isBookmarked={isBookmarked}
             handleBookmark={handleBookmark}
             handleVote={handleVote}
+            handleShare={handleShare}   // ✅ ADD THIS
             user={user}
             setActionError={setActionError}
             setSuccessMessage={setSuccessMessage}

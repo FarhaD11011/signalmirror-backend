@@ -25,6 +25,7 @@ function FeedSection({
       isBookmarked={isBookmarked}
       handleBookmark={handleBookmark}
       handleVote={handleVote}
+      handleShare={handleShare}   // ✅ ADD THIS
       user={user}
       setActionError={setActionError}
       setSuccessMessage={setSuccessMessage}
